@@ -1,3 +1,4 @@
-UnityProject/Library*
-UnityProject/obj/*
+UnityProject/Library/
+UnityProject/obj/
 UnityProject/*.userprefs
+UnityProject/Temp/
