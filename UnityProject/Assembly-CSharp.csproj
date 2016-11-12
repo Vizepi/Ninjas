@@ -45,6 +45,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Acrocatic\Scripts\HUD\Gamecontrolleur.cs" />
+     <Compile Include="Assets\Acrocatic\Scripts\HUD\scoringType.cs" />
+     <Compile Include="Assets\Acrocatic\Scripts\ScoreRelique.cs" />
      <Compile Include="Assets\_Scripts\CameraController.cs" />
      <Compile Include="Assets\_Scripts\Enemy\Bullet.cs" />
      <Compile Include="Assets\_Scripts\Enemy\EnemyState.cs" />
@@ -53,6 +56,7 @@
      <Compile Include="Assets\_Scripts\Enemy\Enemy_Enforcer.cs" />
      <Compile Include="Assets\_Scripts\Enemy\Enemy_GroundTrigger.cs" />
      <Compile Include="Assets\_Scripts\Enemy\PlayerDamager.cs" />
+     <Compile Include="Assets\_Scripts\Enemy\PlayerDetector.cs" />
      <Compile Include="Assets\_Scripts\Enemy\Segment.cs" />
      <Compile Include="Assets\_Scripts\General\CameraFollow.cs" />
      <Compile Include="Assets\_Scripts\General\CameraShake.cs" />
@@ -63,7 +67,11 @@
      <Compile Include="Assets\_Scripts\Hitbox_ennemy.cs" />
      <Compile Include="Assets\_Scripts\Hitbox_sneakPoint.cs" />
      <Compile Include="Assets\_Scripts\Menu.cs" />
+     <Compile Include="Assets\_Scripts\Platforms\JumpThroughDown.cs" />
+     <Compile Include="Assets\_Scripts\Platforms\JumpThroughUp.cs" />
      <Compile Include="Assets\_Scripts\Platforms\Platform.cs" />
+     <Compile Include="Assets\_Scripts\Platforms\PlatformJumpThrough.cs" />
+     <Compile Include="Assets\_Scripts\Platforms\PlatformMove.cs" />
      <Compile Include="Assets\_Scripts\Platforms\PlatformSink.cs" />
      <Compile Include="Assets\_Scripts\Player\Player.cs" />
      <Compile Include="Assets\_Scripts\Player\PlayerDash.cs" />
