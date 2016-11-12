@@ -9,8 +9,10 @@ public class PlayerDamager : MonoBehaviour {
 	public void OnDamage(bool lethal) {
 		dead = lethal || damaged;
 		damaged = !lethal;
+		Debug.Log("touched");
 		if (dead) {
 			// TODO : call gamecontroller to kill player
+			Debug.Log("dead");
 		}
 	}
 

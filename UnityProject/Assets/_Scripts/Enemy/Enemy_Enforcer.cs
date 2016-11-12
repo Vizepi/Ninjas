@@ -27,7 +27,7 @@ public class Enemy_Enforcer : Enemy_Controller {
 	protected override void BeginAttack()
 	{
 		startTimer = 0.0f;
-		fireTimer = 0.0f;
+		fireTimer = 1.0f;
 
 	}
 
@@ -58,4 +58,4 @@ public class Enemy_Enforcer : Enemy_Controller {
 		bullet.GetComponent<Bullet>().Initialize(bulletSpawn.position, player.transform.position);
 	}
 
-	}
+}
