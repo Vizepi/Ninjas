@@ -25,12 +25,14 @@ public class scoring : MonoBehaviour {
 		canvas.text = "Score : " + text;
 
 	}
-	public void AddScore(string type){
-		if (type == "kill") {
-			score = score + 100;
-		}
-		if (type == "relique") {
-			score = score + 1000;
+	public void AddScore(ScoringType type){
+		switch(type) {
+			case ScoringType.KILL:
+				score += 100;
+				break;
+			case ScoringType.RELIC:
+				score += 1000;
+				break;
 		}
 	}
 
