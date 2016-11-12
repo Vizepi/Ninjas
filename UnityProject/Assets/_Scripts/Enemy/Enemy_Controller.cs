@@ -72,6 +72,12 @@ public class Enemy_Controller : MonoBehaviour {
 
 	// KATANA
 
+    //AudioClip Array :
+
+    public AudioClip[] walkSounds;
+    private float soundTimer = 0.0f;
+    private float waitSoundTime = 0.4f;
+
 	// Use this for initialization
 	protected virtual void Start () {
 		animator = GetComponent<Animator>();
@@ -183,6 +189,19 @@ public class Enemy_Controller : MonoBehaviour {
 	void Update () {
 
 		Vector2 velocity = rb.velocity;
+
+        //SoundManagement
+
+        if (state == EnemyState.ROAMING)
+        {
+            soundTimer += Time.deltaTime;
+            if(soundTimer >= waitSoundTime){
+                soundTimer = 0;
+                AudioSource audio = GetComponent<GameObject>().GetComponents<AudioSource>();
+                audio.clip = walkSounds[Random.Range(0, walkSounds.Length)];
+                audio.Play();
+            }
+        }
 
 		// Detecting player
 		float playerDistance = viewLine.SquareLength();
@@ -304,9 +323,12 @@ public class Enemy_Controller : MonoBehaviour {
 					Move(chasingSpeed);
 				}
 				break;
-			case EnemyState.FIRING:
-				Attack();
-				break;
+            case EnemyState.FIRING:
+                Attack();
+                break;
+
+
+
 		}
 
 		if(state == EnemyState.CHASING || state == EnemyState.FIRING) {
