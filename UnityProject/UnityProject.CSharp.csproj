@@ -92,9 +92,10 @@
     <Compile Include="Assets\_Scripts\Player\PlayerRun.cs" />
     <Compile Include="Assets\_Scripts\Player\PlayerShuriken.cs" />
     <Compile Include="Assets\_Scripts\Player\PlayerWall.cs" />
-    <Compile Include="Assets\_Scripts\PlayerAction.cs" />
     <Compile Include="Assets\_Scripts\RandomThought.cs" />
     <Compile Include="Assets\_Scripts\RestartLevel.cs" />
+    <Compile Include="Assets\_Scripts\UI\JutsuScreen.cs" />
+    <Compile Include="Assets\_Scripts\UI\PlayerAction.cs" />
     <Compile Include="Assets\_Scripts\indicateur.cs" />
     <Compile Include="Assets\_Scripts\indicateurConduit.cs" />
     <Compile Include="Assets\_Scripts\scoring.cs" />
