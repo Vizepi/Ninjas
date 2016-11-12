@@ -69,6 +69,7 @@
      <Compile Include="Assets\_Scripts\Player\PlayerRun.cs" />
      <Compile Include="Assets\_Scripts\Player\PlayerWall.cs" />
      <Compile Include="Assets\_Scripts\RandomThought.cs" />
+     <Compile Include="Assets\_Scripts\RestartLevel.cs" />
      <Compile Include="Assets\_Scripts\indicateur.cs" />
      <Compile Include="Assets\_Scripts\scoring.cs" />
      <None Include="Assets\ProjectSettings\ProjectVersion.txt" />
