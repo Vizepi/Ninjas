@@ -1,4 +1,0 @@
-sceneSetups:
-- path: Assets/Acrocatic/Scenes/Tour.unity
-  isLoaded: 1
-  isActive: 1
