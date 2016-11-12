@@ -11,7 +11,7 @@ public class Hitbox_ennemy : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		GameObject playerObject = GameObject.Find ("PlayerComplex");
+		GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
 		ennemy = transform.parent.gameObject;
 		indic = playerObject.GetComponent<indicateur> ();
 		player = playerObject.GetComponent<Acrocatic.Player> ();

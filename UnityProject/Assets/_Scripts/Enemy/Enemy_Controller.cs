@@ -19,6 +19,15 @@ public class Enemy_Controller : MonoBehaviour {
 	protected bool left = false;
 	protected GameObject player = null;
 	protected Segment viewLine = null;
+	protected PlayerDamager playerDamager;
+
+	// ENFORCER
+	/*private float enforcer_StartTimer = 0.0f;
+	private float enforcer_FireTimer = 0.0f;
+	public GameObject enforcer_BulletPrefab;
+	private Transform enforcer_BulletSpawn;*/
+
+	// KATANA
 
 	// DEBUGGING
 	// DEBUGGING
@@ -50,9 +59,20 @@ public class Enemy_Controller : MonoBehaviour {
 	private float swapSideTime = 0.3f;
 	[SerializeField]
 	private float alertDistance = 5.0f;
+	/*[SerializeField]
+	private EnemyType type = EnemyType.ENFORCER;*/
+
+	// ENFORCER
+	/*[Header("Enforcer Settings")]
+	[SerializeField]
+	private float enforcer_StartTime = 0.1f;
+	[SerializeField]
+	private float enforcer_FireRate = 1.0f;*/
+
+	// KATANA
 
 	// Use this for initialization
-	void Start () {
+	protected virtual void Start () {
 		animator = GetComponent<Animator>();
 		rb = GetComponent<Rigidbody2D>();
 		player = GameObject.FindGameObjectWithTag("Player");
@@ -73,6 +93,10 @@ public class Enemy_Controller : MonoBehaviour {
 		SetState(EnemyState.IDLING);
 
 		AddEnemy(this);
+
+		playerDamager = player.GetComponent<PlayerDamager>();
+
+		//StartType();
 
 		// DEBUGGING
 		// DEBUGGING
@@ -117,28 +141,77 @@ public class Enemy_Controller : MonoBehaviour {
 				animator.SetTrigger("startSearching");
 				break;
 			case EnemyState.FIRING:
+				BeginAttack();
 				animator.SetTrigger("startFiring");
 				break;
 		}
 		state = newState;
 	}
 
-	public void SetGroundTriggering(bool triggering)
+	public void SetGroundTriggering(bool t)
 	{
-		this.triggering = triggering;
+		triggering = t;
+		//Debug.Log(triggering);
+	}
+
+	/*void StartType() {
+		switch(type) {
+			case EnemyType.ENFORCER:
+				foreach (Transform t in GetComponentsInChildren<Transform>())
+				{
+					if (t.name == "ShotSpawn")
+					{
+						enforcer_BulletSpawn = t;
+						break;
+					}
+				}
+				break;
+			case EnemyType.KATANA:
+				break;
+		}
+	}*/
+
+	protected virtual void BeginAttack() {
+		/*switch (type) {
+			case EnemyType.ENFORCER:
+				break;
+			case EnemyType.KATANA:
+				break;
+		}*/
+	}
+
+	protected virtual void EndAttack() {
+		/*switch (type)
+		{
+			case EnemyType.ENFORCER:
+				break;
+			case EnemyType.KATANA:
+				break;
+		}*/
 	}
 
 	protected virtual void Attack() {
-		Debug.Log("Attack !!!");
+		/*switch (type) {
+			case EnemyType.ENFORCER:
+				break;
+			case EnemyType.KATANA:
+				break;
+		}*/
 	}
 
 	public void Alert() {
 		playerViewTimer = 0.0f;
 		state = EnemyState.SEARCHING;
 	}
+
+	void Move(float s) {
+		rb.AddForce(new Vector2(speed * direction * 100.0f, 0.0f), ForceMode2D.Impulse);
+	}
 	
 	// Update is called once per frame
 	void Update () {
+
+		Vector2 velocity = rb.velocity;
 
 		// Detecting player
 		float playerDistance = viewLine.SquareLength();
@@ -169,6 +242,7 @@ public class Enemy_Controller : MonoBehaviour {
 			}
 			else if(state == EnemyState.FIRING && playerDistance > playerShotDistance) {
 				playerViewTimer = 0.0f;
+				EndAttack();
 				SetState(EnemyState.CHASING);
 			}
 		}
@@ -184,6 +258,7 @@ public class Enemy_Controller : MonoBehaviour {
 			}
 		}
 		else if(state == EnemyState.FIRING) {
+			EndAttack();
 			SetState(EnemyState.SEARCHING);
 		}
 		else {
@@ -194,12 +269,13 @@ public class Enemy_Controller : MonoBehaviour {
 		switch(state)
 		{
 			case EnemyState.ROAMING:
-				if (!triggering) {
+				if (!triggering)
+				{
 					SetState(EnemyState.IDLING);
 					idleTimer = 0.0f;
 				}
 				else {
-					rb.AddForce(new Vector2(speed * direction * 100.0f, 0.0f), ForceMode2D.Impulse);
+					Move(speed);
 				}
 				break;
 			case EnemyState.IDLING:
@@ -221,7 +297,7 @@ public class Enemy_Controller : MonoBehaviour {
 					}
 				}
 				if(triggering) {
-					rb.AddForce(new Vector2(chasingSpeed * direction * 100.0f, 0.0f), ForceMode2D.Impulse);
+					Move(chasingSpeed);
 				}
 				break;
 			case EnemyState.FIRING:
@@ -232,6 +308,9 @@ public class Enemy_Controller : MonoBehaviour {
 		if(state == EnemyState.CHASING || state == EnemyState.FIRING) {
 			AlertAll(this);
 		}
+
+		velocity = new Vector2(rb.velocity.x, velocity.y);
+		rb.velocity = velocity;
 
 
 		// DEBUGGING
@@ -248,7 +327,6 @@ public class Enemy_Controller : MonoBehaviour {
 		// END DEBUGGING
 		// END DEBUGGING
 	}
-
 
 	// STATIC
 	// STATIC
