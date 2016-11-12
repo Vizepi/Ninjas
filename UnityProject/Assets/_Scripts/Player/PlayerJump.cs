@@ -93,7 +93,7 @@ namespace Acrocatic {
 			}
 			
 			// If the jump button is pressed, jumps are allowed and the player is not dashing, sliding, on a ladder or crouching under an obstacle...
-			if(!jump && Input.GetButtonDown("Jump") && jumps > 0 && !player.dashing && !player.sliding && !player.onLadder && (!player.crouching || (player.crouching && player.AllowedToStandUp()))) {
+			if(!jump && Input.GetButtonDown("Jump") && jumps > 0 && !player.dashing ) {
 				// If the player is grounded...
 				if (player.grounded) {
 					// ... initialize jump.

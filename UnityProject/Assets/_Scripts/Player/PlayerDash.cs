@@ -93,7 +93,7 @@ namespace Acrocatic {
 			}
 
 			// If the dash button is pressed and if a dash is allowed...
-			if (Input.GetButtonDown("Dash") && dashAllowed && !player.dashing && !player.crouching && !player.stuckToWall && !player.falling && !player.sliding && !player.onLadder) {
+			if (Input.GetButtonDown("Dash") && dashAllowed && !player.dashing  && !player.stuckToWall && !player.falling) {
 				// ... perform the dash.
 				dash = true;
 			}
