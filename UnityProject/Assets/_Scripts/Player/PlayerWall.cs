@@ -194,7 +194,7 @@ namespace Acrocatic {
 			}
 
 			// If there can be interacted with the wall and the player is allowed to interact...
-			if (((jumpToStick && !player.grounded) || (!jumpToStick && !player.crouching)) && (wallJump.enabled || wallRun.enabled || wallSlide.enabled) && !player.onLadder) {
+			if ((jumpToStick && !player.grounded) || !jumpToStick && (wallJump.enabled || wallRun.enabled || wallSlide.enabled) ) {
 				// The player is facing a wall if a linecast between the 'frontCheck' objects hits anything on the wall layer.
 				Collider2D hitWall = Physics2D.OverlapArea(player.frontCheckTop.transform.position, player.frontCheckBot.transform.position, wallLayer);
 				facingWall = hitWall != null;

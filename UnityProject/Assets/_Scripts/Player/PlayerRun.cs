@@ -35,7 +35,7 @@ namespace Acrocatic {
 			player.Walk(pressToRun && !running);
 
 			// If the player is not stuck to the wall and the player is not dashing, sliding, crouching and/or on a ladder...
-			if (!player.stuckToWall && !player.dashing && !player.sliding && !player.crouching && !player.onLadder) {
+			if (!player.stuckToWall && !player.dashing) {
 				// ... if the player is changing direction (h has a different sign to velocity.x) or hasn't reached speed yet...
 				if(player.hor * player.rigidbody.velocity.x < speed) {
 					// ... add a force to the player.
@@ -65,12 +65,6 @@ namespace Acrocatic {
 					// ... set the speed to walking or running, depending on the run input.
 					speed = running ? runSpeed : walkSpeed;
 				}
-			}
-
-			// If the player is crouching...
-			if (player.crouching) {
-				// ... set the speed to the crouch speed.
-				speed = player.GetCrouchSpeed();
 			}
 			
 			// Set the player's speed based on the speed of the platform.
