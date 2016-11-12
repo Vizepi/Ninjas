@@ -5,7 +5,7 @@ public class indicateur : MonoBehaviour {
 
 	private SpriteRenderer a;
 	private int counter = 0;
-	private GameObject player;
+	private Acrocatic.Player player;
 	private scoring score;
 
 
@@ -18,6 +18,7 @@ public class indicateur : MonoBehaviour {
 			}
 		}
 		a.enabled = false;
+		player = GetComponent<Acrocatic.Player>();
 
 		score = GameObject.Find("score").GetComponent<scoring> ();
 	}
@@ -39,7 +40,7 @@ public class indicateur : MonoBehaviour {
 	}
 	void OnTriggerEnter2D (Collider2D other) {
 		if (other.tag == "Ennemy_back") {
-			if (other.gameObject.transform.parent.transform.localScale.x < 0 == GetComponent<Acrocatic.Player> ().facingRight) {
+			if (other.gameObject.transform.parent.transform.localScale.x < 0 == player.facingRight) {
 				counter++;
 				a.enabled = true;
 			}
@@ -53,7 +54,8 @@ public class indicateur : MonoBehaviour {
 		}
 	}
 	void OnTriggerStay2D (Collider2D other){
-		if (other.gameObject.transform.parent.transform.localScale.x > 0 == GetComponent<Acrocatic.Player> ().facingRight) {
+		Transform p = other.gameObject.transform.parent;
+		if ((p != null && p.transform.localScale.x > 0 == player.facingRight) || other.tag == "sneakPoint") {
 			counter++;
 			a.enabled = false;
 		} else {

@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-public enum EnemyState {
+﻿public enum EnemyState {
 	
 	ROAMING,
 	IDLING,
