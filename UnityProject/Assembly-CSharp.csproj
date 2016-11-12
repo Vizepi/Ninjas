@@ -46,7 +46,26 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\_Scripts\CameraController.cs" />
+     <Compile Include="Assets\_Scripts\General\CameraFollow.cs" />
+     <Compile Include="Assets\_Scripts\General\CameraShake.cs" />
+     <Compile Include="Assets\_Scripts\General\Death.cs" />
+     <Compile Include="Assets\_Scripts\General\GameSettings.cs" />
+     <Compile Include="Assets\_Scripts\General\Ladder.cs" />
+     <Compile Include="Assets\_Scripts\General\ShowCollider.cs" />
+     <Compile Include="Assets\_Scripts\Hitbox_ennemy.cs" />
      <Compile Include="Assets\_Scripts\Menu.cs" />
+     <Compile Include="Assets\_Scripts\Platforms\Platform.cs" />
+     <Compile Include="Assets\_Scripts\Platforms\PlatformSink.cs" />
+     <Compile Include="Assets\_Scripts\Player\Player.cs" />
+     <Compile Include="Assets\_Scripts\Player\PlayerDash.cs" />
+     <Compile Include="Assets\_Scripts\Player\PlayerHitbox.cs" />
+     <Compile Include="Assets\_Scripts\Player\PlayerJump.cs" />
+     <Compile Include="Assets\_Scripts\Player\PlayerPlatform.cs" />
+     <Compile Include="Assets\_Scripts\Player\PlayerRun.cs" />
+     <Compile Include="Assets\_Scripts\Player\PlayerWall.cs" />
+     <Compile Include="Assets\_Scripts\RandomThought.cs" />
+     <Compile Include="Assets\_Scripts\indicateur.cs" />
+     <Compile Include="Assets\_Scripts\scoring.cs" />
      <None Include="Assets\ProjectSettings\ProjectVersion.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
