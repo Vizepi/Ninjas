@@ -67,6 +67,7 @@ namespace Acrocatic {
 		private PlayerJump playerJump;				// Get the PlayerJump class.
 		private PlayerWall playerWall; 				// Get the PlayerWall class.
 		private PlayerRun playerRun; 				// Get the PlayerRun class.
+		private PlayerCrouch playerCrouch; 			// Get the PlayerCrouch class.
 		private PlayerDash playerDash; 				// Get the PlayerDash class.
 		private PlayerHitbox playerHitbox; 			// Get the PlayerHitbox class.
 		private PlayerPlatform playerPlatform;		// Get the PlayerPlatform class.
@@ -93,6 +94,7 @@ namespace Acrocatic {
 			playerJump = GetComponent<PlayerJump>();
 			playerWall = GetComponent<PlayerWall>();
 			playerRun = GetComponent<PlayerRun>();
+			playerCrouch = GetComponent<PlayerCrouch>();
 			playerDash = GetComponent<PlayerDash>();
 			playerHitbox = GetComponent<PlayerHitbox>();
 			playerPlatform = GetComponent<PlayerPlatform>();
@@ -556,5 +558,25 @@ namespace Acrocatic {
 			}
 			sliding = slide;
 		}
+		// Function to get the crouch speed.
+		public float GetCrouchSpeed() {
+			if (playerCrouch) {
+				return playerCrouch.crouchSpeed;
+			} else {
+				return 0;
+			}
+		}
+		// ###           ###
+		// #################
 
-    }}
+		// #################
+		// ### CROUCHING ###
+		// ###           ###
+		public void OnLadder() {
+			onLadder = true;
+			animator.SetTrigger("triggerLadder");
+		}
+		// ###           ###
+		// #################
+	}
+}

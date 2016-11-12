@@ -66,7 +66,12 @@ namespace Acrocatic {
 					speed = running ? runSpeed : walkSpeed;
 				}
 			}
-                
+
+			// If the player is crouching...
+			if (player.crouching) {
+				// ... set the speed to the crouch speed.
+				speed = player.GetCrouchSpeed();
+			}
 			
 			// Set the player's speed based on the speed of the platform.
 			if (withPlatform) { speed = player.GetSpeedOnMovingPlatform(speed); }
