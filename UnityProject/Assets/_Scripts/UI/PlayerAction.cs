@@ -10,23 +10,30 @@ public class PlayerAction : MonoBehaviour {
 	float counterTimer = 0.0f;
 	float shurikenTimer = 0.0f;
 
+	// eggPlant
+	private float eggPlant_timer = 0.0f;
 	[SerializeField]
-	int eggplantCooldown = 20;
+	private float eggPlant_duration = 5.0f;
+	private bool eggPlant_playing = false;
+	public bool IsEggPlantPlaying() { return eggPlant_playing; }
 
 	[SerializeField]
-	int cloakCooldown = 10;
+	float eggplantCooldown = 20.0f;
 
 	[SerializeField]
-	int decoyCooldown = 10;
+	float cloakCooldown = 10.0f;
 
 	[SerializeField]
-	int dashCooldown = 3;
+	float decoyCooldown = 10.0f;
 
 	[SerializeField]
-	int counterCooldown = 5;
+	float dashCooldown = 3.0f;
 
 	[SerializeField]
-	int shurikenCooldown = 5;
+	float counterCooldown = 5.0f;
+
+	[SerializeField]
+	float shurikenCooldown = 5.0f;
 
 	public int firstJutsu = -1;
 	public int secondJutsu = -1;
@@ -47,6 +54,9 @@ public class PlayerAction : MonoBehaviour {
 			MasterJutsu (secondJutsu);
 		}
 
+		if(eggPlant_playing) {
+			eggPlant_Update();
+		}
 	}
 
 	void MasterJutsu(int selectedJutsu){
@@ -78,6 +88,8 @@ public class PlayerAction : MonoBehaviour {
 			}
 		//do Time Stop
 		eggplantTimer = eggplantCooldown;
+		eggPlant_playing = true;
+		eggPlant_timer = 0.0f;
 	}
 
 	void Cloak(){
@@ -86,6 +98,7 @@ public class PlayerAction : MonoBehaviour {
 		}
 		//do Invisible
 		cloakTimer = cloakCooldown;
+
 	}
 
 	void Decoy(){
@@ -94,6 +107,7 @@ public class PlayerAction : MonoBehaviour {
 		}
 		//do Leurre
 		decoyTimer = decoyCooldown;
+
 	}
 
 	void Dash(){
@@ -102,6 +116,7 @@ public class PlayerAction : MonoBehaviour {
 		}
 		//do Dash
 		dashTimer = dashCooldown;
+
 	}
 
 	void Counter(){
@@ -110,6 +125,7 @@ public class PlayerAction : MonoBehaviour {
 		}
 		//do Riposte
 		counterTimer = counterCooldown;
+
 	}
 
 	void Shuriken(){
@@ -118,5 +134,14 @@ public class PlayerAction : MonoBehaviour {
 		}
 		//do Shuriken
 		shurikenTimer = shurikenCooldown;
+
+	}
+
+	// eggPlant
+	void eggPlant_Update() {
+		eggPlant_timer += Time.deltaTime;
+		if(eggPlant_timer >= eggPlant_duration) {
+			eggPlant_playing = false;
+		}
 	}
 }
