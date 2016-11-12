@@ -46,6 +46,11 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\_Scripts\CameraController.cs" />
+     <Compile Include="Assets\_Scripts\Enemy\EnemyState.cs" />
+     <Compile Include="Assets\_Scripts\Enemy\Enemy_Controller.cs" />
+     <Compile Include="Assets\_Scripts\Enemy\Enemy_GroundTrigger.cs" />
+     <Compile Include="Assets\_Scripts\Enemy\PlayerTest_Controller.cs" />
+     <Compile Include="Assets\_Scripts\Enemy\Segment.cs" />
      <Compile Include="Assets\_Scripts\General\CameraFollow.cs" />
      <Compile Include="Assets\_Scripts\General\CameraShake.cs" />
      <Compile Include="Assets\_Scripts\General\Death.cs" />
@@ -62,8 +67,10 @@
      <Compile Include="Assets\_Scripts\Player\PlayerJump.cs" />
      <Compile Include="Assets\_Scripts\Player\PlayerPlatform.cs" />
      <Compile Include="Assets\_Scripts\Player\PlayerRun.cs" />
+     <Compile Include="Assets\_Scripts\Player\PlayerShuriken.cs" />
      <Compile Include="Assets\_Scripts\Player\PlayerWall.cs" />
      <Compile Include="Assets\_Scripts\RandomThought.cs" />
+     <Compile Include="Assets\_Scripts\RestartLevel.cs" />
      <Compile Include="Assets\_Scripts\indicateur.cs" />
      <Compile Include="Assets\_Scripts\scoring.cs" />
      <None Include="Assets\ProjectSettings\ProjectVersion.txt" />

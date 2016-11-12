@@ -22,7 +22,6 @@ public class Enemy_GroundTrigger : MonoBehaviour {
 		if(c.tag.Equals("SolidPlatform")) {
 			enemyController.SetGroundTriggering(true);
 			platformCounter++;
-			Debug.Log("++" + platformCounter);
 		}
 	}
 
@@ -30,11 +29,9 @@ public class Enemy_GroundTrigger : MonoBehaviour {
 	{
 		if (c.tag.Equals("SolidPlatform")) {
 			platformCounter--;
-			Debug.Log("--" + platformCounter);
 			if (platformCounter <= 0) {
 				enemyController.SetGroundTriggering(false);
 				platformCounter = 0;
-				Debug.Log("out");
 			}
 		}
 	}

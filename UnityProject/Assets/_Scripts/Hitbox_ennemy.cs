@@ -30,7 +30,7 @@ public class Hitbox_ennemy : MonoBehaviour {
 				if (ennemy.gameObject.activeSelf) {
 					ennemy.gameObject.SetActive (false);
 					Destroy (ennemy.gameObject);	
-					score.AddScore (ScoringType.KILL);
+					score.AddScore ("kill");
 				}
 			}
 		}

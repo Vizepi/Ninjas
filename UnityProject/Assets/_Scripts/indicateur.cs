@@ -49,7 +49,7 @@ public class indicateur : MonoBehaviour {
 			if (other.gameObject.activeSelf) {
 				other.gameObject.SetActive (false);
 				Destroy (other);
-				score.AddScore (ScoringType.RELIC);
+				score.AddScore ("relique");
 			}
 		}
 	}

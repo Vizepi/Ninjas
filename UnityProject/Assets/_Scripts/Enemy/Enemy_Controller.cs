@@ -151,52 +151,18 @@ public class Enemy_Controller : MonoBehaviour {
 	public void SetGroundTriggering(bool t)
 	{
 		triggering = t;
-		//Debug.Log(triggering);
 	}
 
-	/*void StartType() {
-		switch(type) {
-			case EnemyType.ENFORCER:
-				foreach (Transform t in GetComponentsInChildren<Transform>())
-				{
-					if (t.name == "ShotSpawn")
-					{
-						enforcer_BulletSpawn = t;
-						break;
-					}
-				}
-				break;
-			case EnemyType.KATANA:
-				break;
-		}
-	}*/
-
 	protected virtual void BeginAttack() {
-		/*switch (type) {
-			case EnemyType.ENFORCER:
-				break;
-			case EnemyType.KATANA:
-				break;
-		}*/
+
 	}
 
 	protected virtual void EndAttack() {
-		/*switch (type)
-		{
-			case EnemyType.ENFORCER:
-				break;
-			case EnemyType.KATANA:
-				break;
-		}*/
+
 	}
 
 	protected virtual void Attack() {
-		/*switch (type) {
-			case EnemyType.ENFORCER:
-				break;
-			case EnemyType.KATANA:
-				break;
-		}*/
+
 	}
 
 	public void Alert() {
@@ -221,7 +187,22 @@ public class Enemy_Controller : MonoBehaviour {
 		bool inViewField = (angle >= (90.0f - playerAngleOfView)) && (angle <= (90.0f + playerAngleOfView));
 		playerInView = (playerDistance <= playerViewDistance) && inViewField;
 		Physics2D.RaycastNonAlloc(viewLine.start, viewLine.end - viewLine.start, raycastHits, viewLine.SquareLength());
-		playerInView &= raycastHits[0].collider.tag == "Player";
+		foreach (RaycastHit2D rayHit in raycastHits) {
+			if (rayHit.collider != null) {
+				if(rayHit.collider.tag == "Player") {
+					playerInView &= true;
+					break;
+				}
+				else if(!rayHit.collider.isTrigger) {
+					playerInView = false;
+					break;
+				}
+			}
+			else {
+				playerInView = false;
+			}
+		}
+		//playerInView &= raycastHits[0].collider.tag == "Player";
 
 		// Changing behavior
 		if (playerInView) {
@@ -229,18 +210,28 @@ public class Enemy_Controller : MonoBehaviour {
 				playerViewTimer += Time.deltaTime;
 				if(playerViewTimer >= playerDetectionTime) {
 					playerViewTimer = 0.0f;
-					SetState(EnemyState.CHASING);
+					if (playerDistance > playerShotDistance) {
+						SetState(EnemyState.CHASING);
+					}
+					else {
+						SetState(EnemyState.FIRING);
+					}
 				}
 			}
 			else if (state == EnemyState.SEARCHING) {
 				playerViewTimer = 0.0f;
-				SetState(EnemyState.CHASING);
+				if (playerDistance > playerShotDistance) {
+					SetState(EnemyState.CHASING);
+				}
+				else {
+					SetState(EnemyState.FIRING);
+				}
 			}
 			else if(state == EnemyState.CHASING && playerDistance <= playerShotDistance) {
 				playerViewTimer = 0.0f;
 				SetState(EnemyState.FIRING);
 			}
-			else if(state == EnemyState.FIRING && playerDistance > playerShotDistance) {
+			else if(state == EnemyState.FIRING && playerDistance > playerShotDistance + 1.0f) {
 				playerViewTimer = 0.0f;
 				EndAttack();
 				SetState(EnemyState.CHASING);
@@ -254,7 +245,12 @@ public class Enemy_Controller : MonoBehaviour {
 			playerViewTimer += Time.deltaTime;
 			if(playerViewTimer >= playerAbandonTime) {
 				playerViewTimer = 0.0f;
-				SetState(EnemyState.ROAMING);
+				if (Random.Range(0, 2) == 0) {
+					SetState(EnemyState.ROAMING);
+				}
+				else {
+					SetState(EnemyState.IDLING);
+				}
 			}
 		}
 		else if(state == EnemyState.FIRING) {
@@ -338,7 +334,7 @@ public class Enemy_Controller : MonoBehaviour {
 			s_enemies.Add(enemy);
 		}
 	}
-
+	
 	static void RemoveEnemy(Enemy_Controller enemy) {
 		s_enemies.Remove(enemy);
 	}

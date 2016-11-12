@@ -13,6 +13,7 @@ public enum CatchPhrase {
 public class RandomThought : MonoBehaviour {
 
     public GUIText text;
+    public string levelToLoad;
     private CatchPhrase _choosenOne = CatchPhrase.None;
     private string phraseToPut;
 
@@ -60,6 +61,6 @@ public class RandomThought : MonoBehaviour {
 
     IEnumerator Wait (int nb){
         yield return new WaitForSeconds(nb);
-        SceneManager.LoadScene("main");
+        SceneManager.LoadScene(levelToLoad);
     }
 }

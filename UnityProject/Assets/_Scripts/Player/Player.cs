@@ -23,12 +23,6 @@ namespace Acrocatic {
 		[HideInInspector]
 		public bool dashing = false;				// Determines if the player is dashing.
 		[HideInInspector]
-		public bool crouching = false;				// Determines if the player is crouching.
-		[HideInInspector]
-		public bool sliding = false;				// Determines if the player is sliding.
-		[HideInInspector]
-		public bool onLadder = false;				// Determines if the player is on a ladder.
-		[HideInInspector]
 		public GameObject frontCheckTop;			// A position marking to check if the player's front.
 		[HideInInspector]
 		public GameObject frontCheckBot;			// A position marking to check if the player's front.
@@ -120,17 +114,14 @@ namespace Acrocatic {
 		void FixedUpdate() {
 			// Set the player's hitbox.
 			if (grounded && !dashing) {
-				if (crouching) {
-					ChangeHitbox("crouch");
-				} else {
+
 					ChangeHitbox("default");
-				}
 			} else {
 				ChangeHitbox("jump");
 			}
 
 			// If the player is stuck to a wall or on a ladder.
-			if (stuckToWall || onLadder) {
+			if (stuckToWall) {
 				// ... set the gravity scale to 0.
 				rigidbody.gravityScale = 0;
 			} else {
@@ -153,12 +144,9 @@ namespace Acrocatic {
 			// Set the animator values.
 			animator.SetBool("grounded", grounded);
 			animator.SetBool("walking", walking);
-			animator.SetBool("crouching", crouching);
-			animator.SetBool("sliding", sliding);
 			animator.SetBool("dashing", dashing);
 			animator.SetBool("falling", falling);
 			animator.SetBool("wall", stuckToWall);
-			animator.SetBool("onLadder", onLadder);
 			animator.SetBool("jumpingThrough", jumpingThrough);
 			animator.SetFloat("horizontal", Mathf.Abs(hor));
 			animator.SetFloat("xSpeed",  Mathf.Abs(rigidbody.velocity.x));
@@ -236,7 +224,7 @@ namespace Acrocatic {
 		// Function to flip the character.
 		void Flip() {
 			// Only flip the player when not dashing or sliding and the player isn't dead and not allowed to move while dead.
-			if (!dashing && !sliding && !(isDead && !moveAfterDeath)) {
+			if (!dashing && !(isDead && !moveAfterDeath)) {
 				flipAgain = false;
 
 				// These if-statements are used to fix a bug where the player would be flipped before changing the animation.
@@ -538,23 +526,6 @@ namespace Acrocatic {
 		public bool AllowedToStandUp() {
 			return playerHitbox ? playerHitbox.AllowedToStandUp() : true;
 		}
-		// ###        ###
-		// ##############
 
-		// #################
-		// ### CROUCHING ###
-		// ###           ###
-		// Function to set the crouching variable based on if the player is crouching.
-		public void Crouch(bool crouch) {
-			crouching = crouch;
-		}
-		// Function to set the sliding variable based on if the player is sliding.
-		public void Slide(bool slide) {
-			// Call the trigger 'startSlide' when sliding.
-			if (!sliding && slide) {
-				animator.SetTrigger("startSlide");
-			}
-			sliding = slide;
-		}
 
     }}

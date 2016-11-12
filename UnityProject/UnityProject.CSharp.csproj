@@ -89,10 +89,11 @@
     <Compile Include="Assets\_Scripts\Player\PlayerJump.cs" />
     <Compile Include="Assets\_Scripts\Player\PlayerPlatform.cs" />
     <Compile Include="Assets\_Scripts\Player\PlayerRun.cs" />
+    <Compile Include="Assets\_Scripts\Player\PlayerShuriken.cs" />
     <Compile Include="Assets\_Scripts\Player\PlayerWall.cs" />
     <Compile Include="Assets\_Scripts\PlayerAction.cs" />
     <Compile Include="Assets\_Scripts\RandomThought.cs" />
-    <Compile Include="Assets\_Scripts\ScoringType.cs" />
+    <Compile Include="Assets\_Scripts\RestartLevel.cs" />
     <Compile Include="Assets\_Scripts\indicateur.cs" />
     <Compile Include="Assets\_Scripts\indicateurConduit.cs" />
     <Compile Include="Assets\_Scripts\scoring.cs" />
