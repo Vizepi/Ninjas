@@ -245,7 +245,7 @@ public class Enemy_Controller : MonoBehaviour {
 			playerViewTimer += Time.deltaTime;
 			if(playerViewTimer >= playerAbandonTime) {
 				playerViewTimer = 0.0f;
-				if (Random.Range(0, 2) == 0) {
+				if (Random.Range(0, 2) == 0 || triggering) {
 					SetState(EnemyState.ROAMING);
 				}
 				else {
