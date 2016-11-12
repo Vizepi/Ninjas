@@ -46,10 +46,13 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\_Scripts\CameraController.cs" />
+     <Compile Include="Assets\_Scripts\Enemy\Bullet.cs" />
      <Compile Include="Assets\_Scripts\Enemy\EnemyState.cs" />
+     <Compile Include="Assets\_Scripts\Enemy\EnemyType.cs" />
      <Compile Include="Assets\_Scripts\Enemy\Enemy_Controller.cs" />
+     <Compile Include="Assets\_Scripts\Enemy\Enemy_Enforcer.cs" />
      <Compile Include="Assets\_Scripts\Enemy\Enemy_GroundTrigger.cs" />
-     <Compile Include="Assets\_Scripts\Enemy\PlayerTest_Controller.cs" />
+     <Compile Include="Assets\_Scripts\Enemy\PlayerDamager.cs" />
      <Compile Include="Assets\_Scripts\Enemy\Segment.cs" />
      <Compile Include="Assets\_Scripts\General\CameraFollow.cs" />
      <Compile Include="Assets\_Scripts\General\CameraShake.cs" />
@@ -58,6 +61,7 @@
      <Compile Include="Assets\_Scripts\General\Ladder.cs" />
      <Compile Include="Assets\_Scripts\General\ShowCollider.cs" />
      <Compile Include="Assets\_Scripts\Hitbox_ennemy.cs" />
+     <Compile Include="Assets\_Scripts\Hitbox_sneakPoint.cs" />
      <Compile Include="Assets\_Scripts\Menu.cs" />
      <Compile Include="Assets\_Scripts\Platforms\Platform.cs" />
      <Compile Include="Assets\_Scripts\Platforms\PlatformSink.cs" />
@@ -69,9 +73,11 @@
      <Compile Include="Assets\_Scripts\Player\PlayerRun.cs" />
      <Compile Include="Assets\_Scripts\Player\PlayerShuriken.cs" />
      <Compile Include="Assets\_Scripts\Player\PlayerWall.cs" />
+     <Compile Include="Assets\_Scripts\PlayerAction.cs" />
      <Compile Include="Assets\_Scripts\RandomThought.cs" />
      <Compile Include="Assets\_Scripts\RestartLevel.cs" />
      <Compile Include="Assets\_Scripts\indicateur.cs" />
+     <Compile Include="Assets\_Scripts\indicateurConduit.cs" />
      <Compile Include="Assets\_Scripts\scoring.cs" />
      <None Include="Assets\ProjectSettings\ProjectVersion.txt" />
  <Reference Include="UnityEngine.UI">
