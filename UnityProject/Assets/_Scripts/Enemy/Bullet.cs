@@ -40,6 +40,9 @@ public class Bullet : MonoBehaviour {
 		{
 			c.gameObject.GetComponent<PlayerDamager>().OnDamage(false);
 		}
+		else if(c.transform.parent != null && c.transform.parent.tag == "Enemy") {
+			return;
+		}
 		enabled = false;
 		Destroy(gameObject);
 	}

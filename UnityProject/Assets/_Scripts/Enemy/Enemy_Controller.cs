@@ -15,6 +15,7 @@ public class Enemy_Controller : MonoBehaviour {
 	private bool playerInView = false;
 	private float playerViewTimer = 0.0f;
 	private RaycastHit2D[] raycastHits = null;
+	private bool playerTriggering = false;
 
 	protected bool left = false;
 	protected GameObject player = null;
@@ -32,7 +33,7 @@ public class Enemy_Controller : MonoBehaviour {
 	// DEBUGGING
 	// DEBUGGING
 	// DEBUGGING
-	private LineRenderer lineViewer = null;
+	/*private LineRenderer lineViewer = null;*/
 	// END DEBUGGING
 	// END DEBUGGING
 	// END DEBUGGING
@@ -101,8 +102,8 @@ public class Enemy_Controller : MonoBehaviour {
 		// DEBUGGING
 		// DEBUGGING
 		// DEBUGGING
-		lineViewer = GetComponent<LineRenderer>();
-		lineViewer.SetWidth(0.05f, 0.05f);
+		/*lineViewer = GetComponent<LineRenderer>();
+		lineViewer.SetWidth(0.05f, 0.05f);*/
 		// END DEBUGGING
 		// END DEBUGGING
 		// END DEBUGGING
@@ -153,6 +154,10 @@ public class Enemy_Controller : MonoBehaviour {
 		triggering = t;
 	}
 
+	public void PlayerTrigger(bool inside) {
+		playerTriggering = inside;
+	}
+
 	protected virtual void BeginAttack() {
 
 	}
@@ -171,7 +176,7 @@ public class Enemy_Controller : MonoBehaviour {
 	}
 
 	void Move(float s) {
-		rb.AddForce(new Vector2(speed * direction * 100.0f, 0.0f), ForceMode2D.Impulse);
+		rb.AddForce(new Vector2(s * direction * 100.0f, 0.0f), ForceMode2D.Impulse);
 	}
 	
 	// Update is called once per frame
@@ -201,6 +206,9 @@ public class Enemy_Controller : MonoBehaviour {
 			else {
 				playerInView = false;
 			}
+		}
+		if(playerTriggering) {
+			SetState(EnemyState.FIRING);
 		}
 		//playerInView &= raycastHits[0].collider.tag == "Player";
 
@@ -312,13 +320,13 @@ public class Enemy_Controller : MonoBehaviour {
 		// DEBUGGING
 		// DEBUGGING
 		// DEBUGGING
-		lineViewer.SetPosition(0, new Vector3(viewLine.start.x, viewLine.start.y, -0.5f));
+		/*lineViewer.SetPosition(0, new Vector3(viewLine.start.x, viewLine.start.y, -0.5f));
 		lineViewer.SetPosition(1, new Vector3(viewLine.end.x, viewLine.end.y, -0.5f));
 		lineViewer.SetColors(Color.green, Color.green);
 		if (playerInView) lineViewer.SetColors(Color.yellow, Color.yellow);
 		if (state == EnemyState.CHASING) lineViewer.SetColors(Color.red, Color.red);
 		if (state == EnemyState.SEARCHING) lineViewer.SetColors(Color.cyan, Color.cyan);
-		if (state == EnemyState.FIRING) lineViewer.SetColors(Color.white, Color.white);
+		if (state == EnemyState.FIRING) lineViewer.SetColors(Color.white, Color.white);*/
 		// END DEBUGGING
 		// END DEBUGGING
 		// END DEBUGGING

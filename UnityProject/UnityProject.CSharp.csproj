@@ -71,6 +71,7 @@
     <Compile Include="Assets\_Scripts\Enemy\Enemy_Enforcer.cs" />
     <Compile Include="Assets\_Scripts\Enemy\Enemy_GroundTrigger.cs" />
     <Compile Include="Assets\_Scripts\Enemy\PlayerDamager.cs" />
+    <Compile Include="Assets\_Scripts\Enemy\PlayerDetector.cs" />
     <Compile Include="Assets\_Scripts\Enemy\Segment.cs" />
     <Compile Include="Assets\_Scripts\General\CameraFollow.cs" />
     <Compile Include="Assets\_Scripts\General\CameraShake.cs" />
