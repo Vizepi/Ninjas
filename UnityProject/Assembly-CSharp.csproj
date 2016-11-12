@@ -47,6 +47,12 @@
   <ItemGroup>
      <Compile Include="Assets\_Scripts\CameraController.cs" />
      <Compile Include="Assets\_Scripts\Menu.cs" />
+     <Compile Include="Assets\_Scripts\Platforms\JumpThroughDown.cs" />
+     <Compile Include="Assets\_Scripts\Platforms\JumpThroughUp.cs" />
+     <Compile Include="Assets\_Scripts\Platforms\PlatformJumpThrough.cs" />
+     <Compile Include="Assets\_Scripts\Platforms\PlatformMove.cs" />
+     <Compile Include="Assets\_Scripts\Platforms\PlatformSink.cs" />
+     <Compile Include="Assets\_Scripts\RandomThought.cs" />
      <None Include="Assets\ProjectSettings\ProjectVersion.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
