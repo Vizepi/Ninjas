@@ -4,42 +4,43 @@ using UnityEngine.UI;
 
 public class Gamecontrolleur : MonoBehaviour {
 
-	//Life Value
-	public int nb_vie;
-	private string text;
-	private Text canvas_vie;
+    //Life Value
+    public int nb_vie;
+    private string text;
+    private Text canvas_vie;
 
-	//Combo Value
-	public float combotime;
-	private bool in_combo;
-	private float timer = 0.0f;
-	private Text canvas_combo;
-	private Image barre_combo;
+    //Combo Value
+    public float combotime;
+    private bool in_combo;
+    private float timer = 0.0f;
+    private Text canvas_combo;
+    private Image barre_combo;
 
-	//Score Value
-	[HideInInspector]
-	public int scoreValue;
-	[HideInInspector]
-	public int comboValue;
-	private string text_score;
-	private Text canvas_score;
+    //Score Value
+    [HideInInspector]
+    public int scoreValue;
+    [HideInInspector]
+    public int comboValue;
+    private string text_score;
+    private Text canvas_score;
 
-	//Spawn Reliques
-	public GameObject[] relique_spawn;
-	private float random_time;
-	private float timer_relique = 0.0f;
-	private int random_relique;
-	public GameObject [] relique;
+    //Spawn Reliques
+    public GameObject[] relique_spawn;
+    private float random_time;
+    private float timer_relique = 0.0f;
+    private int random_relique;
+    public GameObject[] relique;
 
-	//Spawn Ennemy
+    //Spawn Ennemy
 	public GameObject Player;
-	public GameObject[] ennemy_type;
-	public GameObject[] ennemy_spawn;
-	private CircleCollider2D Find_Player;
+    public GameObject[] ennemy_type;
+    public GameObject[] ennemy_spawn;
+    [HideInInspector]
+    private CircleCollider2D Find_Player;
 	public float time_to_spawn = 5.0f;
-	private float timer_ennemy = 0.0f;
-	private int random_spawn_ennemy;
-	private int random_ennemy;
+	public float timer_ennemy = 0.0f;
+	public int random_spawn_ennemy;
+	public int random_ennemy;
 
 
 	void Start () {
@@ -98,10 +99,11 @@ public class Gamecontrolleur : MonoBehaviour {
 			int random_number = Random.Range (0, ennemy_spawn.Length);
 			random_ennemy = Random.Range (0, ennemy_type.Length);
 
-			Instantiate (ennemy_type[random_ennemy], ennemy_spawn[random_number].transform.position, Quaternion.identity);
-			Debug.Log(random_number);
-			timer_ennemy = 0;
-			Debug.Log ("Ennemi Instancier");
+            SpawnPlayer.Spawn_near_player();
+            //Instantiate (ennemy_type[random_ennemy], ennemy_spawn[random_number].transform.position, Quaternion.identity);
+            //Debug.Log(random_number);
+            timer_ennemy = 0;
+			//Debug.Log ("Ennemi Instancier");
 		}
 
 	}
