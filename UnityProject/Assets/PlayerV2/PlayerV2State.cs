@@ -1,0 +1,13 @@
+﻿public enum PlayerV2State
+{
+
+	IDLING,
+	RUNING,
+	JUMPING,
+	FALLING,
+	BINDING,
+	DYING,
+	THROWING,
+	SWORDING
+
+}
