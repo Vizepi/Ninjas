@@ -38,6 +38,7 @@ namespace Acrocatic {
 					// When the timer is complete: reload the same level.
 					gamecontrol.die(vie);
 					Application.LoadLevel(Application.loadedLevelName);
+					
 				}
 			}
 

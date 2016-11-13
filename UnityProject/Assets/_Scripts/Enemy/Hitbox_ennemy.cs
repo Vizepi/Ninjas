@@ -24,8 +24,8 @@ public class Hitbox_ennemy : MonoBehaviour {
 	void OnTriggerStay2D (Collider2D other) {
 		if (direction_player == ennemy.transform.localScale.x < 0.0f) {
 			if (Input.GetKeyDown ("a")) {
-				indic.HideA ();
 				if (ennemy.gameObject.activeSelf) {
+					
 					ennemy.gameObject.SetActive (false);
 					Destroy (ennemy.gameObject);	
 				}

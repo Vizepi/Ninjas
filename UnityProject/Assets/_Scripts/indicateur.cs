@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class indicateur : MonoBehaviour {
 
 	private SpriteRenderer a;
-	private int counter = 0;
-	private GameObject player;
+	private PlayerV2 player;
 
 
 	// Use this for initialization
@@ -16,41 +16,51 @@ public class indicateur : MonoBehaviour {
 				break;
 			}
 		}
+		player = GetComponent<PlayerV2>();
 		a.enabled = false;
 	}
 
 	void Update(){
-		if (counter < 0)
-			a.enabled = false;
-		counter = 0;
+		a.enabled = s_enemies.Count > 0;
 	}
 
 	// Update is called once per frame
 	void OnTriggerExit2D (Collider2D other) {
-		a.enabled = false;
-	}
-
-	void OnTriggerEnter2D (Collider2D other) {
 		if (other.tag == "Ennemy_back") {
-			if (other.gameObject.transform.parent.transform.localScale.x < 0 == GetComponent<Player> ().facingRight) {
-				counter++;
-				a.enabled = true;
-			}
+			RemoveEnemy(other.gameObject.transform.parent.gameObject);
 		}
 	}
 
 	void OnTriggerStay2D (Collider2D other){
 		if (other.tag == "Ennemy_back") {
-			if (other.gameObject.transform.parent.transform.localScale.x > 0 == GetComponent<Player> ().facingRight) {
-				counter++;
-				a.enabled = false;
-			} else {
-				a.enabled = true;
+			if (other.gameObject.transform.parent.transform.localScale.x < 0 == player.FacingLeft()) {
+				AddEnemy(other.gameObject.transform.parent.gameObject);
+				if (Input.GetKeyDown("a")) {
+					KillAll();
+				}
+			}
+			else {
+				RemoveEnemy(other.gameObject.transform.parent.gameObject);
 			}
 		}
 	}
-	public void HideA(){
-		counter = -1;
-		a.enabled = false;	
+
+	static List<GameObject> s_enemies = new List<GameObject>();
+	static void AddEnemy(GameObject e) {
+		if(!s_enemies.Contains(e)) {
+			s_enemies.Add(e);
+		}
+	}
+	static void RemoveEnemy(GameObject e) {
+		if(s_enemies.Contains(e)) {
+			s_enemies.Remove(e);
+		}
+	}
+	static void KillAll() {
+		foreach(GameObject go in s_enemies) {
+			go.SetActive(false);
+			Destroy(go);
+		}
+		s_enemies.Clear();
 	}
 }

@@ -103,6 +103,10 @@ public class PlayerV2 : MonoBehaviour {
 
 	}
 
+	public bool FacingLeft() {
+		return facingLeft;
+	}
+
 	void Look(float inputX) {
 		if (inputX != 0.0f) {
 			SetDirection(inputX > 0.0f);
@@ -111,7 +115,6 @@ public class PlayerV2 : MonoBehaviour {
 
 	void Jump(bool inputJ)
 	{
-		Debug.Log(rb.velocity.y);
 		if (inputJ && (groundContacting || (!doubleJumping && rb.velocity.y > -15.0f)))
 		{
 			rb.velocity = new Vector2(rb.velocity.x, 0.0f);

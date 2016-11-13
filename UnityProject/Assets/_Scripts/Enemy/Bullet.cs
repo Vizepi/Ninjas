@@ -36,8 +36,10 @@ public class Bullet : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D c) {
-		if(c.tag == "Player")
-		{
+		if(c == null) {
+			return;
+		}
+		if(c.tag == "Player") {
 			c.gameObject.GetComponent<PlayerDamager>().OnDamage(false);
 		}
 		else if(c.transform.parent != null && c.transform.parent.tag == "Enemy") {

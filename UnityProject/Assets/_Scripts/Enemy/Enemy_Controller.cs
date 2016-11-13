@@ -16,6 +16,7 @@ public class Enemy_Controller : MonoBehaviour {
 	private float playerViewTimer = 0.0f;
 	private RaycastHit2D[] raycastHits = null;
 	private bool playerTriggering = false;
+	private Vector2 moving;
 
 	protected bool left = false;
 	protected GameObject player = null;
@@ -98,6 +99,7 @@ public class Enemy_Controller : MonoBehaviour {
 		left = startFacingLeft;
 		SetDirection(startFacingLeft);
 		SetState(EnemyState.IDLING);
+		moving = new Vector2();
 
 		AddEnemy(this);
 
@@ -182,7 +184,13 @@ public class Enemy_Controller : MonoBehaviour {
 	}
 
 	void Move(float s) {
-		rb.AddForce(new Vector2(s * direction * 100.0f, 0.0f), ForceMode2D.Impulse);
+		moving.x += s * direction;
+		//rb.AddForce(new Vector2(s * direction * 100.0f, 0.0f), ForceMode2D.Impulse);
+	}
+
+	void FixedUpdate() {
+		rb.velocity = moving + new Vector2(0.0f, rb.velocity.y);
+		moving.x = moving.y = 0.0f;
 	}
 	
 	// Update is called once per frame
