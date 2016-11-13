@@ -45,6 +45,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\PlayerV2\PlayerV2.cs" />
+     <Compile Include="Assets\PlayerV2\PlayerV2GroundDetector.cs" />
+     <Compile Include="Assets\PlayerV2\PlayerV2State.cs" />
+     <Compile Include="Assets\Shuriken.cs" />
      <Compile Include="Assets\_Scripts\CameraController.cs" />
      <Compile Include="Assets\_Scripts\Enemy\Bullet.cs" />
      <Compile Include="Assets\_Scripts\Enemy\EnemyState.cs" />
@@ -60,11 +64,12 @@
      <Compile Include="Assets\_Scripts\HUD\Gamecontrolleur.cs" />
      <Compile Include="Assets\_Scripts\Hitbox_sneakPoint.cs" />
      <Compile Include="Assets\_Scripts\Menu.cs" />
+     <Compile Include="Assets\_Scripts\PauseMenu.cs" />
+     <Compile Include="Assets\_Scripts\PlayerAction.cs" />
      <Compile Include="Assets\_Scripts\RandomThought.cs" />
      <Compile Include="Assets\_Scripts\RestartLevel.cs" />
      <Compile Include="Assets\_Scripts\ScoreRelique.cs" />
      <Compile Include="Assets\_Scripts\UI\JutsuScreen.cs" />
-     <Compile Include="Assets\_Scripts\UI\PlayerAction.cs" />
      <Compile Include="Assets\_Scripts\indicateur.cs" />
      <Compile Include="Assets\_Scripts\indicateurConduit.cs" />
      <None Include="Assets\ProjectSettings\ProjectVersion.txt" />
