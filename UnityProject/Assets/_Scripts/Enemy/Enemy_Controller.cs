@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 public class Enemy_Controller : MonoBehaviour {
 
+	[SerializeField]
+	private int scoreValue = 0;
+
+	[SerializeField]
+	private int comboValue = 0;
+
 	private Animator animator = null;
 	private Rigidbody2D rb = null;
 	private EnemyState state = EnemyState.IDLING;

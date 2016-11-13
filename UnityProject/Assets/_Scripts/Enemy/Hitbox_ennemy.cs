@@ -7,6 +7,7 @@ public class Hitbox_ennemy : MonoBehaviour {
 	private indicateur indic;
 	[HideInInspector]
 	public bool direction_player;
+//	public Gamecontrolleur gc;
 
 	// Use this for initialization
 	void Start () {
@@ -27,7 +28,8 @@ public class Hitbox_ennemy : MonoBehaviour {
 				indic.HideA ();
 				if (ennemy.gameObject.activeSelf) {
 					ennemy.gameObject.SetActive (false);
-					Destroy (ennemy.gameObject);	
+					Destroy (ennemy.gameObject);
+				//	gc.UpdateScore (ennemy.scoreValue, ennemy.comboValue);
 				}
 			}
 		}

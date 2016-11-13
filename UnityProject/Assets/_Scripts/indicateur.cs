@@ -5,7 +5,7 @@ public class indicateur : MonoBehaviour {
 
 	private SpriteRenderer a;
 	private int counter = 0;
-	private GameObject player;
+//	private GameObject player;
 
 
 	// Use this for initialization
@@ -30,7 +30,7 @@ public class indicateur : MonoBehaviour {
 		a.enabled = false;
 	}
 
-	void OnTriggerEnter2D (Collider2D other) {
+/*	void OnTriggerEnter2D (Collider2D other) {
 		if (other.tag == "Ennemy_back") {
 			if (other.gameObject.transform.parent.transform.localScale.x < 0 == GetComponent<Player> ().facingRight) {
 				counter++;
@@ -48,7 +48,7 @@ public class indicateur : MonoBehaviour {
 				a.enabled = true;
 			}
 		}
-	}
+	}*/
 	public void HideA(){
 		counter = -1;
 		a.enabled = false;	
