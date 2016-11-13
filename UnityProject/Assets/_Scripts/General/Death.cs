@@ -8,6 +8,13 @@ namespace Acrocatic {
 		private bool isDead = false;
 		private float deathTimer = 1f;
 
+		private Gamecontrolleur gamecontrol;
+		private int vie;
+
+		void Start (){
+			gamecontrol = GameObject.Find("GameControlleur").GetComponent<Gamecontrolleur> ();
+		}
+
 		// Check if the player is entering the trigger.
 		void OnTriggerEnter2D(Collider2D other) {
 			if (other.gameObject.tag == "Player" && !isDead) {
@@ -15,11 +22,13 @@ namespace Acrocatic {
 				isDead = true;
 
 				// Make sure the player knows he's dead.
-				other.gameObject.GetComponent<Player>().Dead();
+				//other.gameObject.GetComponent<Player>().Dead();
 			}
 		}
 
 		void Update() {
+			vie = gamecontrol.nb_vie;
+
 			// If the player is dead...
 			if (isDead) {
 				// ... run a timer.
@@ -27,6 +36,7 @@ namespace Acrocatic {
 					deathTimer -= Time.deltaTime;
 				} else {
 					// When the timer is complete: reload the same level.
+					gamecontrol.die(vie);
 					Application.LoadLevel(Application.loadedLevelName);
 				}
 			}

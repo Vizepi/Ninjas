@@ -72,6 +72,12 @@ public class Enemy_Controller : MonoBehaviour {
 
 	// KATANA
 
+    //AudioClip Array :
+
+    public AudioClip[] walkSounds;
+    private float soundTimer = 0.0f;
+    private float waitSoundTime = 0.4f;
+
 	// Use this for initialization
 	protected virtual void Start () {
 		animator = GetComponent<Animator>();
@@ -304,9 +310,12 @@ public class Enemy_Controller : MonoBehaviour {
 					Move(chasingSpeed);
 				}
 				break;
-			case EnemyState.FIRING:
-				Attack();
-				break;
+            case EnemyState.FIRING:
+                Attack();
+                break;
+
+
+
 		}
 
 		if(state == EnemyState.CHASING || state == EnemyState.FIRING) {

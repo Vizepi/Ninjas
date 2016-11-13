@@ -13,6 +13,8 @@ public class Enemy_Enforcer : Enemy_Controller {
 	[SerializeField]
 	private float fireRate = 1.0f;
 
+    public AudioClip ennemyAttack;
+
 	protected override void Start() {
 		base.Start();
 		playerDamager = player.GetComponent<PlayerDamager>();
@@ -28,7 +30,6 @@ public class Enemy_Enforcer : Enemy_Controller {
 	{
 		startTimer = 0.0f;
 		fireTimer = 1.0f;
-
 	}
 
 	protected override void EndAttack()
