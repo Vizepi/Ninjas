@@ -22,7 +22,7 @@ namespace Acrocatic {
 				isDead = true;
 
 				// Make sure the player knows he's dead.
-				other.gameObject.GetComponent<Player>().Dead();
+				//other.gameObject.GetComponent<Player>().Dead();
 			}
 		}
 

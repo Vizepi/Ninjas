@@ -190,19 +190,6 @@ public class Enemy_Controller : MonoBehaviour {
 
 		Vector2 velocity = rb.velocity;
 
-        //SoundManagement
-
-        if (state == EnemyState.ROAMING)
-        {
-            soundTimer += Time.deltaTime;
-            if(soundTimer >= waitSoundTime){
-                soundTimer = 0;
-                AudioSource audio = GetComponent<GameObject>().GetComponents<AudioSource>();
-                audio.clip = walkSounds[Random.Range(0, walkSounds.Length)];
-                audio.Play();
-            }
-        }
-
 		// Detecting player
 		float playerDistance = viewLine.SquareLength();
 		viewLine.start = lineThrower.position;
