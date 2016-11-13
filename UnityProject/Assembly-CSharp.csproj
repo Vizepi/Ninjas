@@ -59,23 +59,13 @@
      <Compile Include="Assets\_Scripts\Enemy\PlayerDamager.cs" />
      <Compile Include="Assets\_Scripts\Enemy\PlayerDetector.cs" />
      <Compile Include="Assets\_Scripts\Enemy\Segment.cs" />
-     <Compile Include="Assets\_Scripts\General\CameraFollow.cs" />
-     <Compile Include="Assets\_Scripts\General\CameraShake.cs" />
      <Compile Include="Assets\_Scripts\General\Death.cs" />
-     <Compile Include="Assets\_Scripts\General\GameSettings.cs" />
-     <Compile Include="Assets\_Scripts\General\ShowCollider.cs" />
      <Compile Include="Assets\_Scripts\HUD\Gamecontrolleur.cs" />
      <Compile Include="Assets\_Scripts\HUD\indicateur.cs" />
      <Compile Include="Assets\_Scripts\HUD\scoringType.cs" />
      <Compile Include="Assets\_Scripts\Hitbox_ennemy.cs" />
      <Compile Include="Assets\_Scripts\Hitbox_sneakPoint.cs" />
      <Compile Include="Assets\_Scripts\Menu.cs" />
-     <Compile Include="Assets\_Scripts\Platforms\JumpThroughDown.cs" />
-     <Compile Include="Assets\_Scripts\Platforms\JumpThroughUp.cs" />
-     <Compile Include="Assets\_Scripts\Platforms\Platform.cs" />
-     <Compile Include="Assets\_Scripts\Platforms\PlatformJumpThrough.cs" />
-     <Compile Include="Assets\_Scripts\Platforms\PlatformMove.cs" />
-     <Compile Include="Assets\_Scripts\Platforms\PlatformSink.cs" />
      <Compile Include="Assets\_Scripts\Player\Player.cs" />
      <Compile Include="Assets\_Scripts\Player\PlayerDash.cs" />
      <Compile Include="Assets\_Scripts\Player\PlayerHitbox.cs" />
@@ -86,12 +76,10 @@
      <Compile Include="Assets\_Scripts\RandomThought.cs" />
      <Compile Include="Assets\_Scripts\RestartLevel.cs" />
      <Compile Include="Assets\_Scripts\ScoreRelique.cs" />
-     <Compile Include="Assets\_Scripts\ScoringType.cs" />
      <Compile Include="Assets\_Scripts\UI\JutsuScreen.cs" />
      <Compile Include="Assets\_Scripts\UI\PlayerAction.cs" />
      <Compile Include="Assets\_Scripts\indicateur.cs" />
      <Compile Include="Assets\_Scripts\indicateurConduit.cs" />
-     <Compile Include="Assets\_Scripts\scoring.cs" />
      <None Include="Assets\ProjectSettings\ProjectVersion.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
