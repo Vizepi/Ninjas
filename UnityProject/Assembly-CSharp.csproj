@@ -64,6 +64,7 @@
      <Compile Include="Assets\_Scripts\HUD\Gamecontrolleur.cs" />
      <Compile Include="Assets\_Scripts\Hitbox_sneakPoint.cs" />
      <Compile Include="Assets\_Scripts\Menu.cs" />
+     <Compile Include="Assets\_Scripts\PauseMenu.cs" />
      <Compile Include="Assets\_Scripts\PlayerAction.cs" />
      <Compile Include="Assets\_Scripts\RandomThought.cs" />
      <Compile Include="Assets\_Scripts\RestartLevel.cs" />
