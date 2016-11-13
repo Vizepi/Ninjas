@@ -69,6 +69,7 @@
      <Compile Include="Assets\_Scripts\RandomThought.cs" />
      <Compile Include="Assets\_Scripts\RestartLevel.cs" />
      <Compile Include="Assets\_Scripts\ScoreRelique.cs" />
+     <Compile Include="Assets\_Scripts\SpawnPlayer.cs" />
      <Compile Include="Assets\_Scripts\UI\JutsuScreen.cs" />
      <Compile Include="Assets\_Scripts\indicateur.cs" />
      <Compile Include="Assets\_Scripts\indicateurConduit.cs" />
