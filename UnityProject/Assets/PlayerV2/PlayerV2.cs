@@ -13,6 +13,7 @@ public class PlayerV2 : MonoBehaviour {
 	private bool contactBottom, contactLeft, contactRight;
 	private bool doubleJumping;
 	private Vector2 moving;
+	private float killTimer;
 
 	[SerializeField]
 	private float speed = 3.0f;
@@ -26,10 +27,16 @@ public class PlayerV2 : MonoBehaviour {
 		anim = GetComponent<Animator>();
 		originalScaleX = Mathf.Abs(transform.localScale.x);
 		SetState(PlayerV2State.IDLING);
-		SetDirection(true);
+		SetDirection(false);
 		groundContacting = true;
 		moving = new Vector2();
 		doubleJumping = false;
+		killTimer = 0.0f;
+	}
+
+	public void Sword() {
+		SetState(PlayerV2State.SWORDING);
+		killTimer = 0.0f;
 	}
 	
 	void Update () {
@@ -72,6 +79,10 @@ public class PlayerV2 : MonoBehaviour {
 			case PlayerV2State.THROWING:
 				break;
 			case PlayerV2State.SWORDING:
+				killTimer += Time.deltaTime;
+				if (killTimer >= 0.25f) {
+					SetState(PlayerV2State.IDLING);
+				}
 				break;
 		}
 		if(inputX != 0.0f) {
@@ -157,6 +168,14 @@ public class PlayerV2 : MonoBehaviour {
 		moving += v;
 	}
 
+	public PlayerV2State GetState() {
+		return state;
+	}
+
+	public bool IsDoubleJumping() {
+		return doubleJumping;
+	}
+
 	void SetState(PlayerV2State newState) {
 		switch(newState) {
 			case PlayerV2State.IDLING:
@@ -181,7 +200,7 @@ public class PlayerV2 : MonoBehaviour {
 				anim.SetTrigger("startThrow");
 				break;
 			case PlayerV2State.SWORDING:
-				//anim.SetTrigger("startKill");
+				anim.SetTrigger("startKill");
 				break;
 		}
 		state = newState;

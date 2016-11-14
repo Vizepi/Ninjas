@@ -2,4 +2,4 @@ UnityProject/Library/
 UnityProject/obj/
 UnityProject/*.userprefs
 UnityProject/Temp/
-*.meta
+Build/

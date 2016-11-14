@@ -22,7 +22,7 @@ public class Bullet : MonoBehaviour {
 		direction = target - new Vector2(transform.position.x, transform.position.y);
 		direction.Normalize();
 		direction *= speed;
-		transform.Rotate(0.0f, 0.0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+		transform.Rotate(0.0f, 0.0f, 180.0f + Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
 	}
 	
 	// Update is called once per frame
@@ -36,9 +36,6 @@ public class Bullet : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D c) {
-		if(c == null) {
-			return;
-		}
 		if(c.tag == "Player") {
 			c.gameObject.GetComponent<PlayerDamager>().OnDamage(false);
 		}

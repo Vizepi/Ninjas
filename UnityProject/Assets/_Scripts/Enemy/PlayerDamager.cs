@@ -5,6 +5,11 @@ public class PlayerDamager : MonoBehaviour {
 
 	private bool damaged = false;
 	private bool dead = false;
+	private PlayerV2 player;
+
+	void Start() {
+		player = transform.parent.GetComponent<PlayerV2>();
+	}
 
 	public void OnDamage(bool lethal) {
 		dead = lethal || damaged;
@@ -13,6 +18,7 @@ public class PlayerDamager : MonoBehaviour {
 		if (dead) {
 			// TODO : call gamecontroller to kill player
 			Debug.Log("dead");
+
 		}
 	}
 

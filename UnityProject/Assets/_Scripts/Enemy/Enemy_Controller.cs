@@ -29,14 +29,6 @@ public class Enemy_Controller : MonoBehaviour {
 	protected Segment viewLine = null;
 	protected PlayerDamager playerDamager;
 
-	// ENFORCER
-	/*private float enforcer_StartTimer = 0.0f;
-	private float enforcer_FireTimer = 0.0f;
-	public GameObject enforcer_BulletPrefab;
-	private Transform enforcer_BulletSpawn;*/
-
-	// KATANA
-
 	// DEBUGGING
 	// DEBUGGING
 	// DEBUGGING
@@ -67,17 +59,6 @@ public class Enemy_Controller : MonoBehaviour {
 	private float swapSideTime = 0.3f;
 	[SerializeField]
 	private float alertDistance = 5.0f;
-	/*[SerializeField]
-	private EnemyType type = EnemyType.ENFORCER;*/
-
-	// ENFORCER
-	/*[Header("Enforcer Settings")]
-	[SerializeField]
-	private float enforcer_StartTime = 0.1f;
-	[SerializeField]
-	private float enforcer_FireRate = 1.0f;*/
-
-	// KATANA
 
     //AudioClip Array :
 
@@ -121,6 +102,14 @@ public class Enemy_Controller : MonoBehaviour {
 		// END DEBUGGING
 		// END DEBUGGING
 		// END DEBUGGING
+	}
+
+	public EnemyState GetState() {
+		return state;
+	}
+
+	public bool Noticed() {
+		return (state == EnemyState.ROAMING || state == EnemyState.IDLING) && playerViewTimer != 0.0f;
 	}
 
 	void OnDestroy() {
@@ -327,9 +316,6 @@ public class Enemy_Controller : MonoBehaviour {
             case EnemyState.FIRING:
                 Attack();
                 break;
-
-
-
 		}
 
 		if(state == EnemyState.CHASING || state == EnemyState.FIRING) {

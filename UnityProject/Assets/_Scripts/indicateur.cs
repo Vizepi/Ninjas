@@ -6,6 +6,7 @@ public class indicateur : MonoBehaviour {
 
 	private SpriteRenderer a;
 	private PlayerV2 player;
+	private static Gamecontrolleur gamecontrol;
 
 
 	// Use this for initialization
@@ -18,6 +19,7 @@ public class indicateur : MonoBehaviour {
 		}
 		player = GetComponent<PlayerV2>();
 		a.enabled = false;
+		gamecontrol = GameObject.FindGameObjectWithTag("GameController").GetComponent<Gamecontrolleur>();
 	}
 
 	void Update(){
@@ -37,6 +39,7 @@ public class indicateur : MonoBehaviour {
 				AddEnemy(other.gameObject.transform.parent.gameObject);
 				if (Input.GetKeyDown("a")) {
 					KillAll();
+					player.Sword();
 				}
 			}
 			else {
@@ -58,8 +61,11 @@ public class indicateur : MonoBehaviour {
 	}
 	static void KillAll() {
 		foreach(GameObject go in s_enemies) {
-			go.SetActive(false);
-			Destroy(go);
+			if (go.activeSelf) {
+				go.SetActive(false);
+				Destroy(go);
+				gamecontrol.UpdateScore(100, 1);
+			}
 		}
 		s_enemies.Clear();
 	}
