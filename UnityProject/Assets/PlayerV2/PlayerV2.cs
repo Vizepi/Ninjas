@@ -71,7 +71,8 @@ public class PlayerV2 : MonoBehaviour {
 				Look(inputX);
 				Jump(inputJ);
 				Grounding(inputX);
-				break;
+                Move(new Vector2(0.0f, -1.0f * speed));
+                break;
 			case PlayerV2State.BINDING:
 				break;
 			case PlayerV2State.DYING:
@@ -232,3 +233,4 @@ public class PlayerV2 : MonoBehaviour {
 	}
 
 }
+
