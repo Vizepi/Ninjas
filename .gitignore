@@ -3,3 +3,4 @@ UnityProject/obj/
 UnityProject/*.userprefs
 UnityProject/Temp/
 Build/
+UnityProject/.vs/*
