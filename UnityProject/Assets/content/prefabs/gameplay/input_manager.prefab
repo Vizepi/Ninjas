@@ -1,0 +1,488 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5858448349598416704
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5858448349598416710}
+  - component: {fileID: 5858448349598416711}
+  m_Layer: 0
+  m_Name: input_manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5858448349598416710
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5858448349598416704}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5858448349598416711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5858448349598416704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 650c9654e264b8845adf1389c3818284, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_leftMapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 276
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_rightMapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 275
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_upMapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 273
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_downMapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 274
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_jumpMapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 32
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_attackMapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 97
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_object1Mapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 122
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_object2Mapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 101
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_hideMapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 115
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_teleportMapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 114
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_pauseMapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 9
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_confirmMapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 13
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_cancelMapping:
+    keyMouse:
+      isAxis: 0
+      keyCode: 27
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+    gamepad:
+      isAxis: 0
+      keyCode: 0
+      axisName: 
+      invertAxis: 0
+      axisMinValue: 0
+      axisMaxValue: 0
+      axisPressThreshold: 0
+  m_actions:
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+  - mapping:
+      keyMouse:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0
+      gamepad:
+        isAxis: 0
+        keyCode: 0
+        axisName: 
+        invertAxis: 0
+        axisMinValue: 0
+        axisMaxValue: 0
+        axisPressThreshold: 0

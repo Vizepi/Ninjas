@@ -5,17 +5,36 @@ using UnityEngine;
 #pragma warning disable 649
 
 namespace vzp {
-	public partial class Player : MonoBehaviour {
+	public partial class Player : Singleton< Player > {
 		//=============================================================================================
-		public enum StateName : int {
+		const int kMaxCollidingColliders = 32;
+		const int kMaxContactsPerCollider = 32;
+
+		//=============================================================================================
+		public enum MotionState {
 			Idle,
 			Run,
 			Jump,
-			DoubleJump,
+			Fall,
+			StickWall,
+			Climb,
+
+			// Keep at the end
+			FirstMotionState = Idle,
+			LastMotionState = Climb
+		}
+
+		//=============================================================================================
+		public enum ActionState {
+			None,
 			AttackKatana,
 			AttackShuriken,
 			Hide,
-			Teleport
+			Teleport,
+
+			// Keep at the end
+			FirstActionState = None,
+			LastActionState = Teleport
 		}
 
 		//=============================================================================================
@@ -29,112 +48,278 @@ namespace vzp {
 
 		//=============================================================================================
 		public abstract class State {
-			public abstract StateName GetStateName();
+			public abstract bool IsMotionState();
+			public abstract bool IsActionState();
+			public virtual void Awake() { }
+			public virtual void Start() { }
+			public virtual void OnEnable() { }
+			public virtual void OnDisable() { }
+			public virtual void Update() { }
+			public virtual void LateUpdate() { }
+			public virtual void FixedUpdate() { }
+			public virtual void OnDrawGizmos() { }
+		}
 
-			public abstract void Awake();
-			public abstract void Start();
-			public abstract void OnEnable();
-			public abstract void OnDisable();
-			public abstract void Update();
-			public abstract void LateUpdate();
-			public abstract void FixedUpdate();
+		//=============================================================================================
+		public abstract class StateMotion : State {
+			public override bool IsMotionState() { return true; }
+			public override bool IsActionState() { return false; }
+			public abstract MotionState GetStateName();
+			// WARNING !!! Always return immediately from caller state if this returns true
+			public abstract bool TryTransition( MotionState _fromState );
+		}
+
+		//=============================================================================================
+		public abstract class StateAction : State {
+			public override bool IsMotionState() { return false; }
+			public override bool IsActionState() { return true; }
+			public abstract ActionState GetStateName();
+			public abstract bool TryTransition( ActionState _fromState );
 		}
 
 		//=============================================================================================
 		[Header( "States" )]
 		[SerializeField, Tooltip( "Idle state" )]
-		State m_stateIdle = null;
+		StateIdle m_stateIdle = null;
+		[SerializeField, Tooltip( "Run state" )]
+		StateRun m_stateRun = null;
+		[SerializeField, Tooltip( "Jump state" )]
+		StateJump m_stateJump = null;
+		[SerializeField, Tooltip( "Stick wall state" )]
+		StateStickWall m_stateStickWall = null;
+
+		[Header( "Motion" )]
+		[SerializeField, Tooltip( "Time to reach full speed (sec)" )]
+		float m_fullSpeedTime = 0.3f;
+		[SerializeField, Tooltip( "Time to reach zero speed (sec)" )]
+		float m_zeroSpeedTime = 0.15f;
+
+		[Header( "Physics" )]
+		[SerializeField, Tooltip( "Distance from the player's feet where we are considered grounded (unit)" )]
+		float m_groundDistance = 0.05f;
 
 		//=============================================================================================
-		State[] m_states = new State[ Enum.GetNames( typeof( StateName ) ).Length ];
-		StateName m_currentState = StateName.Idle;
+		StateMotion[] m_motionStates = new StateMotion[ ( int )MotionState.LastMotionState - ( int )MotionState.FirstMotionState + 1 ];
+		StateAction[] m_actionStates = new StateAction[ ( int )ActionState.LastActionState - ( int )ActionState.FirstActionState + 1 ];
+		MotionState m_currentMotionState = MotionState.Idle;
+		ActionState m_currentActionState = ActionState.None;
 		Animator m_animator = null;
-
-		//=============================================================================================
-		public static Player PlayerInstance {
-			get; private set;
-		}
+		Rigidbody2D m_rigidbody = null;
+		RaycastHit2D[] m_groundHitChecker = new RaycastHit2D[ 1 ];
+		bool m_isGrounded = true;
+		float m_horizontalMotion = 0.0f;
+		float m_horizontalMotionDirection = 0.0f;
 
 		//=============================================================================================
 		private void Awake() {
-			Debug.Assert( PlayerInstance == null );
-			PlayerInstance = this;
+			InitSingleton();
 
 			m_animator = GetComponent<Animator>();
 			Debug.Assert( m_animator );
+			m_rigidbody = GetComponent<Rigidbody2D>();
+			Debug.Assert( m_rigidbody );
 
-			m_states[ ( int )StateName.Idle ] = m_stateIdle;
-			foreach ( State state in m_states ) {
-				Debug.Assert( state != null );
-				state.Awake();
+			m_motionStates[ ( int )MotionState.Idle ] = m_stateIdle;
+			m_motionStates[ ( int )MotionState.Run ] = m_stateRun;
+			m_motionStates[ ( int )MotionState.Jump ] = m_stateJump;
+			m_motionStates[ ( int )MotionState.Fall ] = null;
+			m_motionStates[ ( int )MotionState.StickWall ] = m_stateStickWall;
+			m_motionStates[ ( int )MotionState.Climb ] = null;
+			foreach ( State state in m_motionStates ) {
+				// TODO jkieffer - Enable this assert when states are ready, and remove the ?. from all calls
+				// Debug.Assert( state != null );
+				state?.Awake();
 			}
+
+			m_actionStates[ ( int )ActionState.None ] = null;
+			m_actionStates[ ( int )ActionState.AttackKatana ] = null;
+			m_actionStates[ ( int )ActionState.AttackShuriken ] = null;
+			m_actionStates[ ( int )ActionState.Hide ] = null;
+			m_actionStates[ ( int )ActionState.Teleport ] = null;
+			foreach ( State state in m_actionStates ) {
+				// TODO jkieffer - Enable this assert when states are ready, and remove the ?. from all calls
+				// Debug.Assert( state != null );
+				state?.Awake();
+			}
+			SetState( m_currentMotionState, StateTransitionOrder.EnableNoDisable, true );
+			SetState( m_currentActionState, StateTransitionOrder.EnableNoDisable, true );
 		}
 
 		//=============================================================================================
 		void Start() {
-			foreach ( State state in m_states ) {
+			foreach ( State state in m_motionStates ) {
+				state?.Start();
+			}
+			foreach ( State state in m_actionStates ) {
 				state?.Start();
 			}
 		}
 
 		//=============================================================================================
 		void OnDestroy() {
-			if ( PlayerInstance == this ) {
-				PlayerInstance = null;
-			}
+			ShutdownSingleton();
 		}
 
 		//=============================================================================================
 		void Update() {
-			m_states[ ( int )m_currentState ]?.Update();
+			m_motionStates[ ( int )m_currentMotionState ]?.Update();
+			m_actionStates[ ( int )m_currentActionState ]?.Update();
+
+			ApplyMotion();
+			m_isGrounded = Physics2D.RaycastNonAlloc(
+				m_rigidbody.position,
+				Vector2.down,
+				m_groundHitChecker,
+				m_groundDistance, Physics2D.GetLayerCollisionMask( gameObject.layer ) ) != 0;
 		}
 
 		//=============================================================================================
 		void LateUpdate() {
-			m_states[ ( int )m_currentState ]?.LateUpdate();
+			m_motionStates[ ( int )m_currentMotionState ]?.LateUpdate();
+			m_actionStates[ ( int )m_currentActionState ]?.LateUpdate();
 		}
 
 		//=============================================================================================
 		void FixedUpdate() {
-			m_states[ ( int )m_currentState ]?.FixedUpdate();
+			m_motionStates[ ( int )m_currentMotionState ]?.FixedUpdate();
+			m_actionStates[ ( int )m_currentActionState ]?.FixedUpdate();
 		}
 
 		//=============================================================================================
-		public void SetState( StateName _state, StateTransitionOrder _transition = StateTransitionOrder.DisableThenEnable, bool _forceTransition = false ) {
-			// TODO jkieffer - Remove this if once all states are implemented
-			if ( m_states[ ( int )_state ] == null ) { return; }
+		void OnDrawGizmos() {
+			m_motionStates[ ( int )m_currentMotionState ]?.OnDrawGizmos();
+			m_actionStates[ ( int )m_currentActionState ]?.OnDrawGizmos();
 
-			if ( _state != m_currentState && !_forceTransition ) {
-				switch ( _transition ) {
-				case StateTransitionOrder.DisableThenEnable:
-					m_states[ ( int )m_currentState ]?.OnDisable();
-					m_states[ ( int )_state ]?.OnEnable();
-					break;
-				case StateTransitionOrder.EnableThenDisable:
-					m_states[ ( int )_state ]?.OnEnable();
-					m_states[ ( int )m_currentState ]?.OnDisable();
-					break;
-				case StateTransitionOrder.EnableNoDisable:
-					m_states[ ( int )_state ]?.OnEnable();
-					break;
-				case StateTransitionOrder.DisableNoEnable:
-					m_states[ ( int )m_currentState ]?.OnDisable();
-					break;
-				case StateTransitionOrder.NoEnableNoDisable:
-					break;
-				}
-				m_currentState = _state;
+			switch ( m_currentMotionState ) {
+			case MotionState.Idle:
+				Gizmos.color = Color.blue;
+				break;
+			case MotionState.Run:
+				Gizmos.color = Color.cyan;
+				break;
+			case MotionState.Jump:
+				Gizmos.color = Color.green;
+				break;
+			case MotionState.Fall:
+				Gizmos.color = Color.magenta;
+				break;
+			case MotionState.StickWall:
+				Gizmos.color = Color.red;
+				break;
+			case MotionState.Climb:
+				Gizmos.color = Color.yellow;
+				break;
+			}
+			Gizmos.DrawLine( transform.position, transform.position + Vector3.up );
+		}
+
+		//=============================================================================================
+		void OnDrawGizmosSelected() {
+			foreach ( State state in m_motionStates ) {
+				state?.OnDrawGizmos();
+			}
+			foreach ( State state in m_actionStates ) {
+				state?.OnDrawGizmos();
 			}
 		}
 
 		//=============================================================================================
-		public State GetState( StateName _state ) {
-			return m_states[ ( int )_state ];
+		public void SetState( MotionState _state, StateTransitionOrder _transition = StateTransitionOrder.DisableThenEnable, bool _forceTransition = false ) {
+			SetStateGeneric( _state, ref m_currentMotionState, ( int )_state, ( int )m_currentMotionState, m_motionStates, _transition, _forceTransition );
 		}
 
 		//=============================================================================================
-		public StateName GetCurrentState() {
-			return m_currentState;
+		public void SetState( ActionState _state, StateTransitionOrder _transition = StateTransitionOrder.DisableThenEnable, bool _forceTransition = false ) {
+			SetStateGeneric( _state, ref m_currentActionState, ( int )_state, ( int )m_currentMotionState, m_actionStates, _transition, _forceTransition );
+		}
+
+		//=============================================================================================
+		void SetStateGeneric<T,U>( T _state, ref T _currentState, int _iState, int _iCurrentState, U[] _states, StateTransitionOrder _transition, bool _forceTransition ) where U : State {
+			// TODO jkieffer - Remove this if once all states are implemented
+			if ( _states[ _iState ] == null ) { return; }
+
+			if ( _iState != _iCurrentState && !_forceTransition ) {
+				switch ( _transition ) {
+				case StateTransitionOrder.DisableThenEnable:
+					_states[ _iCurrentState ]?.OnDisable();
+					_states[ _iState ]?.OnEnable();
+					break;
+				case StateTransitionOrder.EnableThenDisable:
+					_states[ _iState ]?.OnEnable();
+					_states[ _iCurrentState ]?.OnDisable();
+					break;
+				case StateTransitionOrder.EnableNoDisable:
+					_states[ _iState ]?.OnEnable();
+					break;
+				case StateTransitionOrder.DisableNoEnable:
+					_states[ _iCurrentState ]?.OnDisable();
+					break;
+				case StateTransitionOrder.NoEnableNoDisable:
+					break;
+				}
+				_currentState = _state;
+			}
+		}
+
+		//=============================================================================================
+		public StateMotion GetMotionState( MotionState _state ) {
+			return m_motionStates[ ( int )_state ];
+		}
+
+		//=============================================================================================
+		public StateAction GetActionState( ActionState _state ) {
+			return m_actionStates[ ( int )_state ];
+		}
+
+		//=============================================================================================
+		public MotionState GetCurrentMotionState() {
+			return m_currentMotionState;
+		}
+
+		//=============================================================================================
+		public ActionState GetCurrentActionState() {
+			return m_currentActionState;
+		}
+
+		//=============================================================================================
+		public bool IsGrounded() {
+			return m_isGrounded;
+		}
+
+		//=============================================================================================
+		public void SetHorizontalMotion( float _motion, float _direction ) {
+			m_horizontalMotion = _motion;
+			m_horizontalMotionDirection = _direction;
+		}
+
+		//=============================================================================================
+		void ApplyMotion() {
+			float currentXMotion = Instance.m_rigidbody.velocity.x;
+			float currentXMotionSign = Mathf.Sign( currentXMotion );
+			if ( m_horizontalMotionDirection == 0.0f ) {
+				// Reduce speed by deceleration factor
+				float speedScaleFactor = m_horizontalMotion * Time.deltaTime / m_zeroSpeedTime;
+
+				if ( Mathf.Abs( currentXMotion ) < speedScaleFactor ) {
+					currentXMotion = 0.0f;
+				} else {
+					currentXMotion -= currentXMotionSign * speedScaleFactor;
+				}
+
+				Instance.m_rigidbody.velocity = new Vector2( currentXMotion, Instance.m_rigidbody.velocity.y );
+
+			} else {
+				if ( currentXMotion != 0.0f && m_horizontalMotionDirection != currentXMotionSign ) {
+					float speedScaleFactor = m_horizontalMotion * Time.deltaTime / m_zeroSpeedTime;
+					currentXMotion -= currentXMotionSign * speedScaleFactor;
+				}
+				float accelerationFactor = m_horizontalMotion * Time.deltaTime / m_fullSpeedTime;
+				currentXMotion += m_horizontalMotionDirection * accelerationFactor;
+				currentXMotion = Mathf.Clamp( currentXMotion, -m_horizontalMotion, m_horizontalMotion );
+
+				Instance.m_rigidbody.velocity = new Vector2( currentXMotion, Instance.m_rigidbody.velocity.y );
+			}
+			m_horizontalMotionDirection = 0.0f;
 		}
 	}
 }
