@@ -83,10 +83,8 @@ public class Gamecontrolleur : MonoBehaviour {
 				random_relique = Random.Range (0, relique.Length);
 
 				Instantiate (relique[random_relique], relique_spawn[random_number].transform.position, Quaternion.identity);
-				Debug.Log (random_number);
 				timer_relique = 0;
 				random_time = Random.Range (25, 40);
-				Debug.Log (random_time);
 		}
 
 		//Spawn des ennemis

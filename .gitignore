@@ -2,7 +2,9 @@ UnityProject/Library/
 UnityProject/obj/
 UnityProject/*.userprefs
 UnityProject/Temp/
+UnityProject/Logs/
+UnityProject/Packages/
 Build/
-UnityProject/.vs/*
+UnityProject/.vs/
 UnityProject/*.csproj
 UnityProject/*.sln
