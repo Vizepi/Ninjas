@@ -4,3 +4,5 @@ UnityProject/*.userprefs
 UnityProject/Temp/
 Build/
 UnityProject/.vs/*
+UnityProject/*.csproj
+UnityProject/*.sln
