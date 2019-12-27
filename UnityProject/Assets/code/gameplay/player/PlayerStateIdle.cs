@@ -24,11 +24,11 @@ namespace vzp {
 				Debug.Assert( inputs );
 
 				if ( !Instance.IsGrounded() ||
-					( inputs[ InputManager.ActionName.Left ].state.state.isPressed ) ||
-					( inputs[ InputManager.ActionName.Right ].state.state.isPressed ) ||
-					( inputs[ InputManager.ActionName.Up ].state.state.isPressed ) ||
-					( inputs[ InputManager.ActionName.Down ].state.state.isPressed ) ||
-					( inputs[ InputManager.ActionName.Jump ].state.state.isPressed ) ) {
+					inputs[ InputManager.ActionName.Left ].state.state.isPressed ||
+					inputs[ InputManager.ActionName.Right ].state.state.isPressed ||
+					inputs[ InputManager.ActionName.Up ].state.state.isPressed ||
+					inputs[ InputManager.ActionName.Down ].state.state.isPressed ||
+					inputs[ InputManager.ActionName.Jump ].state.state.isPressed ) {
 					// There is a motion query, move, climb or jump
 					return false;
 				}
@@ -52,7 +52,7 @@ namespace vzp {
 			public override void Update() {
 				// Check state transitions
 				if ( Instance.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ||
-					 //Instance.GetMotionState( StateName.Climb ).TryTransition() ||
+					Instance.GetMotionState( MotionState.Climb ).TryTransition( GetStateName() ) ||
 					Instance.GetMotionState( MotionState.Run ).TryTransition( GetStateName() ) ) {
 					return;
 				}

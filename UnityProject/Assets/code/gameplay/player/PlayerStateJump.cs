@@ -51,19 +51,45 @@ namespace vzp {
 						doJump = true;
 					}
 				} else if ( _fromState == MotionState.StickWall ) {
-					impulseDirection.y = m_wallJumpForce * Mathf.Sin( Mathf.Deg2Rad * m_wallJumpAngle );
-					impulseDirection.x = m_wallJumpForce * Mathf.Cos( Mathf.Deg2Rad * m_wallJumpAngle );
 					StateStickWall stateStickWall = Instance.GetMotionState( MotionState.StickWall ) as StateStickWall;
+
+					if ( inputs[ InputManager.ActionName.Jump ].state.state.justPressed ) {
+						impulseDirection.y = m_wallJumpForce * Mathf.Sin( Mathf.Deg2Rad * m_wallJumpAngle );
+						impulseDirection.x = m_wallJumpForce * Mathf.Cos( Mathf.Deg2Rad * m_wallJumpAngle );
+						doJump = true;
+						m_hasExecutedFirstJump = false;
+					} else if ( stateStickWall.IsStickingOnLeftWall() ) {
+						if ( inputs[ InputManager.ActionName.Right ].state.state.justPressed ) {
+							doJump = true;
+							m_hasExecutedFirstJump = false;
+						}
+					} else {
+						if ( inputs[ InputManager.ActionName.Left ].state.state.justPressed ) {
+							doJump = true;
+							m_hasExecutedFirstJump = false;
+						}
+					}
+
 					if ( !stateStickWall.IsStickingOnLeftWall() ) {
 						impulseDirection.x = -impulseDirection.x;
 					}
-					m_hasExecutedFirstJump = true;
+				} else if ( _fromState == MotionState.Run || _fromState == MotionState.Idle ) {
+					m_hasExecutedFirstJump = false;
 					doJump = true;
+				} else if ( _fromState == MotionState.Climb ) {
+					if ( inputs[ InputManager.ActionName.Jump ].state.state.justPressed ) {
+						impulseDirection.y = m_jumpForce;
+						m_hasExecutedFirstJump = false;
+						doJump = true;
+					} else if ( inputs[ InputManager.ActionName.Left ].state.state.justPressed ||
+						inputs[ InputManager.ActionName.Right ].state.state.justPressed ) {
+						m_hasExecutedFirstJump = false;
+						doJump = true;
+					}
 				}
 
 				if ( doJump ) {
 					ApplyJump( impulseDirection );
-					m_afterJumpTimer = m_afterJumpDelay;
 					Instance.SetState( GetStateName() );
 				}
 
@@ -103,7 +129,9 @@ namespace vzp {
 
 					// Check state transitions
 					if ( Instance.GetMotionState( MotionState.Idle ).TryTransition( GetStateName() ) ||
-						Instance.GetMotionState( MotionState.Run ).TryTransition( GetStateName() ) ) {
+						Instance.GetMotionState( MotionState.Run ).TryTransition( GetStateName() ) ||
+						Instance.GetMotionState( MotionState.StickWall ).TryTransition( GetStateName() ) ||
+						Instance.GetMotionState( MotionState.Climb ).TryTransition( GetStateName() ) ) {
 						return;
 					}
 				}
@@ -113,6 +141,7 @@ namespace vzp {
 			void ApplyJump( Vector2 _force ) {
 				Instance.m_rigidbody.velocity = new Vector2( Instance.m_rigidbody.velocity.x, 0.0f );
 				Instance.m_rigidbody.AddForce( _force, ForceMode2D.Impulse );
+				m_afterJumpTimer = m_afterJumpDelay;
 			}
 		}
 	}

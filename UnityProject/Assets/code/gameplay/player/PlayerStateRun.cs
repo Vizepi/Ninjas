@@ -29,8 +29,8 @@ namespace vzp {
 				Debug.Assert( inputs );
 
 				if ( Instance.IsGrounded() && (
-					( inputs[ InputManager.ActionName.Left ].state.state.isPressed ) ||
-					( inputs[ InputManager.ActionName.Right ].state.state.isPressed ) ) ) {
+					inputs[ InputManager.ActionName.Left ].state.state.isPressed ||
+					inputs[ InputManager.ActionName.Right ].state.state.isPressed ) ) {
 
 					Instance.SetState( GetStateName() );
 					return true;
@@ -54,6 +54,10 @@ namespace vzp {
 			//=============================================================================================
 			public override void Update() {
 				if ( !Instance.IsGrounded() ) {
+					if ( //Instance.GetMotionState( StateName.Climb ).TryTransition() ||
+						Instance.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ) {
+						return;
+					}
 					return;
 				}
 
@@ -78,15 +82,10 @@ namespace vzp {
 				}
 
 				// Check if player is jumping or climbing
-				if ( //Instance.GetMotionState( StateName.Climb ).TryTransition() ||
+				if ( Instance.GetMotionState( MotionState.Climb ).TryTransition( GetStateName() ) ||
 					Instance.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ) {
 					return;
 				}
-
-				// Check if player is falling
-				//if ( Instance.GetMotionState( MotionState.Fall ).TryTransition( GetStateName() ) ) {
-				//	return;
-				//}
 
 				m_currentMotion = motion;
 			}

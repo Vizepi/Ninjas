@@ -13,6 +13,8 @@ namespace vzp {
 			Vector2[] m_leftStickOffset = null;
 			[SerializeField, Tooltip( "Offsets of right sticking raycasts" )]
 			Vector2[] m_rightStickOffset = null;
+			[SerializeField, Tooltip( "Collision mask of walls" )]
+			LayerMask m_wallCollisionMask = 0;
 			[Header( "Animation" )]
 			[SerializeField, Tooltip( "Name of the stick on the wall animation" )]
 			string m_stickAnimationName = "";
@@ -29,6 +31,10 @@ namespace vzp {
 			public override bool TryTransition( MotionState _fromState ) {
 				InputManager inputs = InputManager.Instance;
 				Debug.Assert( inputs );
+
+				if ( Instance.m_rigidbody.velocity.y > 0.0f ) {
+					return false;
+				}
 
 				// Left wall
 				bool stick = true;
@@ -73,14 +79,14 @@ namespace vzp {
 			public override void OnEnable() {
 				Instance.m_animator.Play( m_stickAnimationKey );
 				Instance.m_rigidbody.isKinematic = true;
+				Instance.m_rigidbody.velocity = Vector2.zero;
 			}
 
 			//=============================================================================================
 			public override void Update() {
 				// Check state transitions
 				Instance.m_rigidbody.isKinematic = false;
-				if ( Instance.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ||
-					Instance.GetMotionState( MotionState.Fall ).TryTransition( GetStateName() ) ) {
+				if ( Instance.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ) {
 					return;
 				}
 				Instance.m_rigidbody.isKinematic = true;
@@ -113,7 +119,7 @@ namespace vzp {
 					_direction,
 					Instance.m_groundHitChecker,
 					m_stickDistance,
-					Physics2D.GetLayerCollisionMask( Instance.gameObject.layer ) ) != 0;
+					m_wallCollisionMask ) != 0;
 			}
 		}
 	}

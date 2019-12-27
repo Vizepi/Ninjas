@@ -1,5 +1,4 @@
 ﻿// © Copyright 2019 J. KIEFFER - All Rights Reserved.
-using System;
 using UnityEngine;
 
 #pragma warning disable 649
@@ -15,7 +14,6 @@ namespace vzp {
 			Idle,
 			Run,
 			Jump,
-			Fall,
 			StickWall,
 			Climb,
 
@@ -87,6 +85,8 @@ namespace vzp {
 		StateJump m_stateJump = null;
 		[SerializeField, Tooltip( "Stick wall state" )]
 		StateStickWall m_stateStickWall = null;
+		[SerializeField, Tooltip( "Climb state" )]
+		StateClimb m_stateClimb = null;
 
 		[Header( "Motion" )]
 		[SerializeField, Tooltip( "Time to reach full speed (sec)" )]
@@ -97,6 +97,8 @@ namespace vzp {
 		[Header( "Physics" )]
 		[SerializeField, Tooltip( "Distance from the player's feet where we are considered grounded (unit)" )]
 		float m_groundDistance = 0.05f;
+		[SerializeField, Tooltip( "Collision layers used for gond detection" )]
+		LayerMask m_groundLayer = 0;
 
 		//=============================================================================================
 		StateMotion[] m_motionStates = new StateMotion[ ( int )MotionState.LastMotionState - ( int )MotionState.FirstMotionState + 1 ];
@@ -105,6 +107,7 @@ namespace vzp {
 		ActionState m_currentActionState = ActionState.None;
 		Animator m_animator = null;
 		Rigidbody2D m_rigidbody = null;
+		CapsuleCollider2D m_capsule = null;
 		RaycastHit2D[] m_groundHitChecker = new RaycastHit2D[ 1 ];
 		bool m_isGrounded = true;
 		float m_horizontalMotion = 0.0f;
@@ -118,13 +121,14 @@ namespace vzp {
 			Debug.Assert( m_animator );
 			m_rigidbody = GetComponent<Rigidbody2D>();
 			Debug.Assert( m_rigidbody );
+			m_capsule = GetComponent<CapsuleCollider2D>();
+			Debug.Assert( m_capsule );
 
 			m_motionStates[ ( int )MotionState.Idle ] = m_stateIdle;
 			m_motionStates[ ( int )MotionState.Run ] = m_stateRun;
 			m_motionStates[ ( int )MotionState.Jump ] = m_stateJump;
-			m_motionStates[ ( int )MotionState.Fall ] = null;
 			m_motionStates[ ( int )MotionState.StickWall ] = m_stateStickWall;
-			m_motionStates[ ( int )MotionState.Climb ] = null;
+			m_motionStates[ ( int )MotionState.Climb ] = m_stateClimb;
 			foreach ( State state in m_motionStates ) {
 				// TODO jkieffer - Enable this assert when states are ready, and remove the ?. from all calls
 				// Debug.Assert( state != null );
@@ -170,7 +174,8 @@ namespace vzp {
 				m_rigidbody.position,
 				Vector2.down,
 				m_groundHitChecker,
-				m_groundDistance, Physics2D.GetLayerCollisionMask( gameObject.layer ) ) != 0;
+				m_groundDistance,
+				m_groundLayer ) != 0;
 		}
 
 		//=============================================================================================
@@ -199,9 +204,6 @@ namespace vzp {
 				break;
 			case MotionState.Jump:
 				Gizmos.color = Color.green;
-				break;
-			case MotionState.Fall:
-				Gizmos.color = Color.magenta;
 				break;
 			case MotionState.StickWall:
 				Gizmos.color = Color.red;
