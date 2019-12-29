@@ -100,6 +100,10 @@ namespace vzp {
 		[SerializeField, Tooltip( "Collision layers used for gond detection" )]
 		LayerMask m_groundLayer = 0;
 
+		[Header( "View" )]
+		[SerializeField, Tooltip( "The camera of the player" )]
+		PlayerCamera m_camera = null;
+
 		//=============================================================================================
 		StateMotion[] m_motionStates = new StateMotion[ ( int )MotionState.LastMotionState - ( int )MotionState.FirstMotionState + 1 ];
 		StateAction[] m_actionStates = new StateAction[ ( int )ActionState.LastActionState - ( int )ActionState.FirstActionState + 1 ];
@@ -147,6 +151,9 @@ namespace vzp {
 			}
 			SetState( m_currentMotionState, StateTransitionOrder.EnableNoDisable, true );
 			SetState( m_currentActionState, StateTransitionOrder.EnableNoDisable, true );
+
+			Debug.Assert( m_camera != null );
+			m_camera.Awake();
 		}
 
 		//=============================================================================================
@@ -176,6 +183,8 @@ namespace vzp {
 				m_groundHitChecker,
 				m_groundDistance,
 				m_groundLayer ) != 0;
+
+			m_camera.Update();
 		}
 
 		//=============================================================================================
