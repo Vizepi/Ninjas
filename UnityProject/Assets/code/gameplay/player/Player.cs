@@ -25,8 +25,8 @@ namespace vzp {
 		//=============================================================================================
 		public enum ActionState {
 			None,
-			AttackKatana,
-			AttackShuriken,
+			Attack,
+			Jutsu,
 			Hide,
 			Teleport,
 
@@ -76,7 +76,7 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		[Header( "States" )]
+		[Header( "Motion states" )]
 		[SerializeField, Tooltip( "Idle state" )]
 		StateIdle m_stateIdle = null;
 		[SerializeField, Tooltip( "Run state" )]
@@ -87,6 +87,10 @@ namespace vzp {
 		StateStickWall m_stateStickWall = null;
 		[SerializeField, Tooltip( "Climb state" )]
 		StateClimb m_stateClimb = null;
+
+		[Header( "Action states" )]
+		[SerializeField, Tooltip( "None state" )]
+		StateNone m_stateNone = null;
 
 		[Header( "Motion" )]
 		[SerializeField, Tooltip( "Time to reach full speed (sec)" )]
@@ -119,7 +123,9 @@ namespace vzp {
 
 		//=============================================================================================
 		private void Awake() {
-			InitSingleton();
+			if ( !InitSingleton() ) {
+				return;
+			}
 
 			m_animator = GetComponent<Animator>();
 			Debug.Assert( m_animator );
@@ -134,14 +140,13 @@ namespace vzp {
 			m_motionStates[ ( int )MotionState.StickWall ] = m_stateStickWall;
 			m_motionStates[ ( int )MotionState.Climb ] = m_stateClimb;
 			foreach ( State state in m_motionStates ) {
-				// TODO jkieffer - Enable this assert when states are ready, and remove the ?. from all calls
-				// Debug.Assert( state != null );
-				state?.Awake();
+				Debug.Assert( state != null );
+				state.Awake();
 			}
 
-			m_actionStates[ ( int )ActionState.None ] = null;
-			m_actionStates[ ( int )ActionState.AttackKatana ] = null;
-			m_actionStates[ ( int )ActionState.AttackShuriken ] = null;
+			m_actionStates[ ( int )ActionState.None ] = m_stateNone;
+			m_actionStates[ ( int )ActionState.Attack ] = null;
+			m_actionStates[ ( int )ActionState.Jutsu ] = null;
 			m_actionStates[ ( int )ActionState.Hide ] = null;
 			m_actionStates[ ( int )ActionState.Teleport ] = null;
 			foreach ( State state in m_actionStates ) {
@@ -159,7 +164,7 @@ namespace vzp {
 		//=============================================================================================
 		void Start() {
 			foreach ( State state in m_motionStates ) {
-				state?.Start();
+				state.Start();
 			}
 			foreach ( State state in m_actionStates ) {
 				state?.Start();
@@ -189,13 +194,13 @@ namespace vzp {
 
 		//=============================================================================================
 		void LateUpdate() {
-			m_motionStates[ ( int )m_currentMotionState ]?.LateUpdate();
+			m_motionStates[ ( int )m_currentMotionState ].LateUpdate();
 			m_actionStates[ ( int )m_currentActionState ]?.LateUpdate();
 		}
 
 		//=============================================================================================
 		void FixedUpdate() {
-			m_motionStates[ ( int )m_currentMotionState ]?.FixedUpdate();
+			m_motionStates[ ( int )m_currentMotionState ].FixedUpdate();
 			m_actionStates[ ( int )m_currentActionState ]?.FixedUpdate();
 		}
 

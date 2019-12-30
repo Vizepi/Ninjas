@@ -7,13 +7,14 @@ namespace vzp {
 		public static T Instance { get; private set; }
 
 		//=============================================================================================
-		protected void InitSingleton() {
+		protected bool InitSingleton() {
 			Debug.Assert( Instance == null );
 			if ( Instance != null ) {
 				Destroy( this );
-				return;
+				return false;
 			}
 			Instance = ( T )this;
+			return true;
 		}
 
 		//=============================================================================================

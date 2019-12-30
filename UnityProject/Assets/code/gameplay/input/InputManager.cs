@@ -12,8 +12,8 @@ namespace vzp {
 			Down,
 			Jump,
 			Attack,
-			Object1,
-			Object2,
+			Jutsu1,
+			Jutsu2,
 			Hide,
 			Teleport,
 			Pause,
@@ -94,10 +94,10 @@ namespace vzp {
 		ActionMapping m_jumpMapping;
 		[SerializeField, Tooltip( "Attack action mapping" )]
 		ActionMapping m_attackMapping;
-		[SerializeField, Tooltip( "Object1 action mapping" )]
-		ActionMapping m_object1Mapping;
-		[SerializeField, Tooltip( "Object2 action mapping" )]
-		ActionMapping m_object2Mapping;
+		[SerializeField, Tooltip( "Jutsu 1 action mapping" )]
+		ActionMapping m_jutsu1Mapping;
+		[SerializeField, Tooltip( "Jutsu 2 action mapping" )]
+		ActionMapping m_jutsu2Mapping;
 		[SerializeField, Tooltip( "Hide action mapping" )]
 		ActionMapping m_hideMapping;
 		[SerializeField, Tooltip( "Teleport action mapping" )]
@@ -123,7 +123,9 @@ namespace vzp {
 
 		//=============================================================================================
 		void Awake() {
-			InitSingleton();
+			if ( !InitSingleton() ) {
+				return;
+			}
 
 			m_actions[ ( int )ActionName.Left ] = new Action { mapping = m_leftMapping };
 			m_actions[ ( int )ActionName.Right ] = new Action { mapping = m_rightMapping };
@@ -131,8 +133,8 @@ namespace vzp {
 			m_actions[ ( int )ActionName.Down ] = new Action { mapping = m_downMapping };
 			m_actions[ ( int )ActionName.Jump ] = new Action { mapping = m_jumpMapping };
 			m_actions[ ( int )ActionName.Attack ] = new Action { mapping = m_attackMapping };
-			m_actions[ ( int )ActionName.Object1 ] = new Action { mapping = m_object1Mapping };
-			m_actions[ ( int )ActionName.Object2 ] = new Action { mapping = m_object2Mapping };
+			m_actions[ ( int )ActionName.Jutsu1 ] = new Action { mapping = m_jutsu1Mapping };
+			m_actions[ ( int )ActionName.Jutsu2 ] = new Action { mapping = m_jutsu2Mapping };
 			m_actions[ ( int )ActionName.Hide ] = new Action { mapping = m_hideMapping };
 			m_actions[ ( int )ActionName.Teleport ] = new Action { mapping = m_teleportMapping };
 			m_actions[ ( int )ActionName.Pause ] = new Action { mapping = m_pauseMapping };
