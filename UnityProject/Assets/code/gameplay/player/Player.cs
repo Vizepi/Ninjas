@@ -91,6 +91,8 @@ namespace vzp {
 		[Header( "Action states" )]
 		[SerializeField, Tooltip( "None state" )]
 		StateNone m_stateNone = null;
+		[SerializeField, Tooltip( "Hide state" )]
+		StateHide m_stateHide = null;
 
 		[Header( "Motion" )]
 		[SerializeField, Tooltip( "Time to reach full speed (sec)" )]
@@ -147,7 +149,7 @@ namespace vzp {
 			m_actionStates[ ( int )ActionState.None ] = m_stateNone;
 			m_actionStates[ ( int )ActionState.Attack ] = null;
 			m_actionStates[ ( int )ActionState.Jutsu ] = null;
-			m_actionStates[ ( int )ActionState.Hide ] = null;
+			m_actionStates[ ( int )ActionState.Hide ] = m_stateHide;
 			m_actionStates[ ( int )ActionState.Teleport ] = null;
 			foreach ( State state in m_actionStates ) {
 				// TODO jkieffer - Enable this assert when states are ready, and remove the ?. from all calls

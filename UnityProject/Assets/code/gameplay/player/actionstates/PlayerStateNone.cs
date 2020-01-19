@@ -18,10 +18,10 @@ namespace vzp {
 
 			//=============================================================================================
 			public override void Update() {
-				if ( Instance.GetActionState( ActionState.Attack ).TryTransition( GetStateName() ) ||
-					Instance.GetActionState( ActionState.Jutsu ).TryTransition( GetStateName() ) ||
-					Instance.GetActionState( ActionState.Hide ).TryTransition( GetStateName() ) ||
-					Instance.GetActionState( ActionState.Teleport ).TryTransition( GetStateName() ) ) {
+				if ( //Instance.GetActionState( ActionState.Attack ).TryTransition( GetStateName() ) ||
+					//Instance.GetActionState( ActionState.Jutsu ).TryTransition( GetStateName() ) ||
+					Instance.GetActionState( ActionState.Hide ).TryTransition( GetStateName() ) /*||
+					Instance.GetActionState( ActionState.Teleport ).TryTransition( GetStateName() )*/ ) {
 					return;
 				}
 			}
