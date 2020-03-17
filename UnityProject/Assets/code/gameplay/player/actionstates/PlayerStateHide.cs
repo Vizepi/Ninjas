@@ -10,26 +10,29 @@ namespace vzp {
 			enum State {
 				Hiding,
 				Hidden,
-				Leaving,
 				Out
 			}
 
 			//=============================================================================================
 			[SerializeField, Tooltip( "Collision mask of the hideout" )]
 			LayerMask m_collisionMask = 0;
+			[SerializeField, Tooltip( "Animation to play when entering the hideout" )]
+			string m_enterAnimation;
 			[SerializeField, Tooltip( "Time for the player to hide" )]
 			float m_hidingTime = 0.1f;
-			[SerializeField, Tooltip( "Time for the player to leave the hideout" )]
-			float m_leavingTime = 0.1f;
 
 			Collider2D[] m_colliders = new Collider2D[ 1 ];
-			Hideout m_currentHideout = null;
 			State m_hideState = State.Out;
 			float m_timer = 0.0f;
 
 			//=============================================================================================
 			public override ActionState GetStateName() {
 				return ActionState.Hide;
+			}
+
+			//=============================================================================================
+			public override void Awake() {
+				Debug.Assert( !string.IsNullOrWhiteSpace( m_enterAnimation ) );
 			}
 
 			//=============================================================================================
@@ -49,10 +52,11 @@ namespace vzp {
 
 			//=============================================================================================
 			public override void OnEnable() {
-				Instance.m_animator.Play( m_currentHideout.EnterAnimation );
+				Instance.m_animator.Play( m_enterAnimation );
 				Instance.m_rigidbody.isKinematic = true;
 				Instance.m_rigidbody.velocity = Vector2.zero;
 				m_timer = m_hidingTime;
+				m_hideState = State.Hiding;
 			}
 
 			//=============================================================================================
@@ -62,17 +66,29 @@ namespace vzp {
 
 				switch ( m_hideState ) {
 				case State.Hiding:
+					m_timer -= Time.deltaTime;
+					if ( m_timer <= 0.0f ) {
+						m_hideState = State.Hidden;
+					}
 					break;
 				case State.Hidden:
-					Debug.Assert( m_currentHideout );
-					Instance.m_animator.Play( m_currentHideout.LeaveAnimation );
-					break;
-				case State.Leaving:
-					break;
-				case State.Out:
-					if ( Instance.GetActionState( ActionState.None ).TryTransition( GetStateName() ) ) {
+					Instance.m_rigidbody.isKinematic = false;
+					if ( Instance.GetActionState( ActionState.Attack ).TryTransition( GetStateName() ) ||
+						Instance.GetActionState( ActionState.Jutsu ).TryTransition( GetStateName() ) ) {
+						m_hideState = State.Out;
 						return;
 					}
+					if ( Instance.GetMotionState( MotionState.Run ).TryTransition( MotionState.Idle ) ||
+						Instance.GetMotionState( MotionState.Jump ).TryTransition( MotionState.Idle ) ||
+						Instance.GetMotionState( MotionState.Climb ).TryTransition( MotionState.Idle ) ) {
+						Instance.SetState( ActionState.None );
+						m_hideState = State.Out;
+						return;
+					}
+					Instance.m_rigidbody.isKinematic = true;
+					break;
+				case State.Out:
+					Instance.SetState( ActionState.None );
 					break;
 				}
 			}
@@ -82,21 +98,10 @@ namespace vzp {
 				bool wasCastingTriggers = Physics2D.queriesHitTriggers;
 				Physics2D.queriesHitTriggers = true;
 
-				if ( Physics2D.OverlapCapsuleNonAlloc(
-					VectorConverter.ToVector2( Instance.transform.position ) + Instance.m_capsule.offset,
-					Instance.m_capsule.size,
-					CapsuleDirection2D.Vertical,
-					0.0f,
-					m_colliders,
-					m_collisionMask ) != 0 ) {
-
-					m_currentHideout = m_colliders[ 0 ].GetComponent<Hideout>();
-					Debug.Assert( m_currentHideout );
-
-					return m_currentHideout != null;
-				}
-
-				return false;
+				return ( Physics2D.OverlapPointNonAlloc(
+							VectorConverter.ToVector2( Instance.transform.position ) + Instance.m_capsule.offset,
+							m_colliders,
+							m_collisionMask ) != 0 );
 			}
 		}
 	}

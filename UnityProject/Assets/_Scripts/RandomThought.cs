@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using System.Collections;
 
 public enum CatchPhrase {
@@ -12,7 +13,7 @@ public enum CatchPhrase {
 
 public class RandomThought : MonoBehaviour {
 
-    public GUIText text;
+    public Text text;
     public string levelToLoad;
     private CatchPhrase _choosenOne = CatchPhrase.None;
     private string phraseToPut;
