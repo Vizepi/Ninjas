@@ -237,6 +237,27 @@ namespace vzp {
 				break;
 			}
 			Gizmos.DrawLine( transform.position, transform.position + Vector3.up );
+
+			switch ( m_currentActionState ) {
+			case ActionState.None:
+				Gizmos.color = Color.blue;
+				break;
+			case ActionState.Attack:
+				Gizmos.color = Color.cyan;
+				break;
+			case ActionState.Jutsu:
+				Gizmos.color = Color.green;
+				break;
+			case ActionState.Hide:
+				Gizmos.color = Color.red;
+				break;
+			case ActionState.Teleport:
+				Gizmos.color = Color.yellow;
+				break;
+			}
+			Gizmos.DrawLine(
+				transform.position + Vector3.up * 0.5f - Vector3.left * 0.25f,
+				transform.position + Vector3.up * 0.5f + Vector3.left * 0.25f );
 		}
 
 		//=============================================================================================
