@@ -1,4 +1,4 @@
-﻿// © Copyright 2019 J. KIEFFER - All Rights Reserved.
+﻿// Copyright 2019 J. KIEFFER - All Rights Reserved.
 using System;
 
 namespace vzp {
@@ -12,16 +12,16 @@ namespace vzp {
 
 			//=============================================================================================
 			public override bool TryTransition( ActionState _fromState ) {
-				Instance.SetState( GetStateName() );
+				Game.Player.SetState( GetStateName() );
 				return true;
 			}
 
 			//=============================================================================================
 			public override void Update() {
-				if ( //Instance.GetActionState( ActionState.Attack ).TryTransition( GetStateName() ) ||
-					//Instance.GetActionState( ActionState.Jutsu ).TryTransition( GetStateName() ) ||
-					Instance.GetActionState( ActionState.Hide ).TryTransition( GetStateName() ) /*||
-					Instance.GetActionState( ActionState.Teleport ).TryTransition( GetStateName() )*/ ) {
+				if ( //Game.Player.GetActionState( ActionState.Attack ).TryTransition( GetStateName() ) ||
+					 //Game.Player.GetActionState( ActionState.Jutsu ).TryTransition( GetStateName() ) ||
+					Game.Player.GetActionState( ActionState.Hide ).TryTransition( GetStateName() ) /*||
+					Game.Player.GetActionState( ActionState.Teleport ).TryTransition( GetStateName() )*/ ) {
 					return;
 				}
 			}

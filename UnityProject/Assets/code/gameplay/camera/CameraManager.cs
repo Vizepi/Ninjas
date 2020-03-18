@@ -1,9 +1,9 @@
-﻿// © Copyright 2019 J. KIEFFER - All Rights Reserved.
+﻿// Copyright 2019 J. KIEFFER - All Rights Reserved.
 using System;
 using UnityEngine;
 
 namespace vzp {
-	public class CameraManager : Singleton<CameraManager> {
+	public class CameraManager : GameSystemManager {
 		//=============================================================================================
 		[Serializable]
 		public class CameraSlot {
@@ -22,11 +22,7 @@ namespace vzp {
 		CameraSlot[] m_otherCameras = null;
 
 		//=============================================================================================
-		void Awake() {
-			if ( !InitSingleton() ) {
-				return;
-			}
-
+		public override void OnAwake() {
 			Debug.Assert( m_mainCamera.camera );
 			Debug.Assert( m_mainCamera.transform );
 			foreach ( CameraSlot camera in m_otherCameras ) {
@@ -36,12 +32,7 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		void OnDestroy() {
-			ShutdownSingleton();
-		}
-
-		//=============================================================================================
-		void Update() {
+		public override void OnUpdate() {
 			UpdateSlot( m_mainCamera );
 			foreach ( CameraSlot slot in m_otherCameras) {
 				UpdateSlot( slot );

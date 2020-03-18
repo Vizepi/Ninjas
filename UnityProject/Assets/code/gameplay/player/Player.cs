@@ -1,10 +1,8 @@
-﻿// © Copyright 2019 J. KIEFFER - All Rights Reserved.
+﻿// Copyright 2019 J. KIEFFER - All Rights Reserved.
 using UnityEngine;
 
-#pragma warning disable 649
-
 namespace vzp {
-	public partial class Player : Singleton< Player > {
+	public partial class Player : GameSystemManager {
 		//=============================================================================================
 		const int kMaxCollidingColliders = 32;
 		const int kMaxContactsPerCollider = 32;
@@ -76,6 +74,10 @@ namespace vzp {
 		}
 
 		//=============================================================================================
+		[Header( "Attributes" )]
+		[SerializeField, Tooltip( "Number of lifes of the player" )]
+		int m_lifes = 2;
+
 		[Header( "Motion states" )]
 		[SerializeField, Tooltip( "Idle state" )]
 		StateIdle m_stateIdle = null;
@@ -124,11 +126,22 @@ namespace vzp {
 		float m_horizontalMotionDirection = 0.0f;
 
 		//=============================================================================================
-		private void Awake() {
-			if ( !InitSingleton() ) {
-				return;
-			}
+		public MotionState CurrentMotionState {
+			get { return m_currentMotionState; }
+		}
 
+		//=============================================================================================
+		public ActionState CurrentActionState {
+			get { return m_currentActionState; }
+		}
+
+		//=============================================================================================
+		public bool IsGrounded {
+			get { return m_isGrounded; }
+		}
+
+		//=============================================================================================
+		public override void OnAwake() {
 			m_animator = GetComponent<Animator>();
 			Debug.Assert( m_animator );
 			m_rigidbody = GetComponent<Rigidbody2D>();
@@ -164,7 +177,7 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		void Start() {
+		public override void OnStart() {
 			foreach ( State state in m_motionStates ) {
 				state.Start();
 			}
@@ -174,12 +187,7 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		void OnDestroy() {
-			ShutdownSingleton();
-		}
-
-		//=============================================================================================
-		void Update() {
+		public override void OnUpdate() {
 			m_motionStates[ ( int )m_currentMotionState ]?.Update();
 			m_actionStates[ ( int )m_currentActionState ]?.Update();
 
@@ -195,13 +203,13 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		void LateUpdate() {
+		public override void OnLateUpdate() {
 			m_motionStates[ ( int )m_currentMotionState ].LateUpdate();
 			m_actionStates[ ( int )m_currentActionState ]?.LateUpdate();
 		}
 
 		//=============================================================================================
-		void FixedUpdate() {
+		public override void OnFixedUpdate() {
 			m_motionStates[ ( int )m_currentMotionState ].FixedUpdate();
 			m_actionStates[ ( int )m_currentActionState ]?.FixedUpdate();
 		}
@@ -290,21 +298,6 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		public MotionState GetCurrentMotionState() {
-			return m_currentMotionState;
-		}
-
-		//=============================================================================================
-		public ActionState GetCurrentActionState() {
-			return m_currentActionState;
-		}
-
-		//=============================================================================================
-		public bool IsGrounded() {
-			return m_isGrounded;
-		}
-
-		//=============================================================================================
 		public void SetHorizontalMotion( float _motion, float _direction ) {
 			m_horizontalMotion = _motion;
 			m_horizontalMotionDirection = _direction;
@@ -312,7 +305,7 @@ namespace vzp {
 
 		//=============================================================================================
 		void ApplyMotion() {
-			float currentXMotion = Instance.m_rigidbody.velocity.x;
+			float currentXMotion = m_rigidbody.velocity.x;
 			float currentXMotionSign = Mathf.Sign( currentXMotion );
 			if ( m_horizontalMotionDirection == 0.0f ) {
 				// Reduce speed by deceleration factor
@@ -324,7 +317,7 @@ namespace vzp {
 					currentXMotion -= currentXMotionSign * speedScaleFactor;
 				}
 
-				Instance.m_rigidbody.velocity = new Vector2( currentXMotion, Instance.m_rigidbody.velocity.y );
+				m_rigidbody.velocity = new Vector2( currentXMotion, m_rigidbody.velocity.y );
 
 			} else {
 				if ( currentXMotion != 0.0f && m_horizontalMotionDirection != currentXMotionSign ) {
@@ -335,11 +328,9 @@ namespace vzp {
 				currentXMotion += m_horizontalMotionDirection * accelerationFactor;
 				currentXMotion = Mathf.Clamp( currentXMotion, -m_horizontalMotion, m_horizontalMotion );
 
-				Instance.m_rigidbody.velocity = new Vector2( currentXMotion, Instance.m_rigidbody.velocity.y );
+				m_rigidbody.velocity = new Vector2( currentXMotion, m_rigidbody.velocity.y );
 			}
 			m_horizontalMotionDirection = 0.0f;
 		}
 	}
 }
-
-#pragma warning restore 649

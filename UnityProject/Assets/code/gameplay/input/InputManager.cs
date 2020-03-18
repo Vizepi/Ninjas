@@ -1,9 +1,9 @@
-﻿// © Copyright 2019 J. KIEFFER - All Rights Reserved.
+﻿// Copyright 2019 J. KIEFFER - All Rights Reserved.
 using System;
 using UnityEngine;
 
 namespace vzp {
-	public class InputManager : Singleton< InputManager > {
+	public class InputManager : GameSystemManager {
 		//=============================================================================================
 		public enum ActionName {
 			Left,
@@ -122,11 +122,7 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		void Awake() {
-			if ( !InitSingleton() ) {
-				return;
-			}
-
+		public override void OnAwake() {
 			m_actions[ ( int )ActionName.Left ] = new Action { mapping = m_leftMapping };
 			m_actions[ ( int )ActionName.Right ] = new Action { mapping = m_rightMapping };
 			m_actions[ ( int )ActionName.Up ] = new Action { mapping = m_upMapping };
@@ -140,11 +136,6 @@ namespace vzp {
 			m_actions[ ( int )ActionName.Pause ] = new Action { mapping = m_pauseMapping };
 			m_actions[ ( int )ActionName.Confirm ] = new Action { mapping = m_confirmMapping };
 			m_actions[ ( int )ActionName.Cancel ] = new Action { mapping = m_cancelMapping };
-		}
-
-		//=============================================================================================
-		void OnDestroy() {
-			ShutdownSingleton();
 		}
 
 		//=============================================================================================
@@ -167,7 +158,7 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		void Update() {
+		public override void OnUpdate() {
 			foreach ( Action action in m_actions ) {
 				ActionState newState = new ActionState();
 

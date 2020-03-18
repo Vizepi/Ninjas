@@ -1,4 +1,4 @@
-﻿// © Copyright 2019 J. KIEFFER - All Rights Reserved.
+﻿// Copyright 2019 J. KIEFFER - All Rights Reserved.
 using System;
 using UnityEngine;
 
@@ -29,10 +29,7 @@ namespace vzp {
 
 			//=============================================================================================
 			public override bool TryTransition( MotionState _fromState ) {
-				InputManager inputs = InputManager.Instance;
-				Debug.Assert( inputs );
-
-				if ( Instance.m_rigidbody.velocity.y > 0.0f ) {
+				if ( Game.Player.m_rigidbody.velocity.y > 0.0f ) {
 					return false;
 				}
 
@@ -46,7 +43,7 @@ namespace vzp {
 				}
 				if ( stick ) {
 					m_stickingOnLeftWall = true;
-					Instance.SetState( GetStateName() );
+					Game.Player.SetState( GetStateName() );
 					return true;
 				}
 
@@ -60,7 +57,7 @@ namespace vzp {
 				}
 				if ( stick ) {
 					m_stickingOnLeftWall = false;
-					Instance.SetState( GetStateName() );
+					Game.Player.SetState( GetStateName() );
 					return true;
 				}
 
@@ -77,19 +74,19 @@ namespace vzp {
 
 			//=============================================================================================
 			public override void OnEnable() {
-				Instance.m_animator.Play( m_stickAnimationKey );
-				Instance.m_rigidbody.isKinematic = true;
-				Instance.m_rigidbody.velocity = Vector2.zero;
+				Game.Player.m_animator.Play( m_stickAnimationKey );
+				Game.Player.m_rigidbody.isKinematic = true;
+				Game.Player.m_rigidbody.velocity = Vector2.zero;
 			}
 
 			//=============================================================================================
 			public override void Update() {
 				// Check state transitions
-				Instance.m_rigidbody.isKinematic = false;
-				if ( Instance.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ) {
+				Game.Player.m_rigidbody.isKinematic = false;
+				if ( Game.Player.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ) {
 					return;
 				}
-				Instance.m_rigidbody.isKinematic = true;
+				Game.Player.m_rigidbody.isKinematic = true;
 			}
 
 			//=============================================================================================
@@ -97,13 +94,13 @@ namespace vzp {
 				Gizmos.color = Color.cyan;
 				foreach ( Vector2 offset in m_leftStickOffset ) {
 					Gizmos.DrawLine(
-						Instance.transform.position + new Vector3( offset.x, offset.y, 0.0f ),
-						Instance.transform.position + new Vector3( offset.x - m_stickDistance, offset.y, 0.0f ) );
+						Game.Player.transform.position + new Vector3( offset.x, offset.y, 0.0f ),
+						Game.Player.transform.position + new Vector3( offset.x - m_stickDistance, offset.y, 0.0f ) );
 				}
 				foreach ( Vector2 offset in m_rightStickOffset ) {
 					Gizmos.DrawLine(
-						Instance.transform.position + new Vector3( offset.x, offset.y, 0.0f ),
-						Instance.transform.position + new Vector3( offset.x + m_stickDistance, offset.y, 0.0f ) );
+						Game.Player.transform.position + new Vector3( offset.x, offset.y, 0.0f ),
+						Game.Player.transform.position + new Vector3( offset.x + m_stickDistance, offset.y, 0.0f ) );
 				}
 			}
 
@@ -115,9 +112,9 @@ namespace vzp {
 			//=============================================================================================
 			bool CastWall( Vector2 _offset, Vector2 _direction ) {
 				return Physics2D.RaycastNonAlloc(
-					Instance.transform.position + new Vector3( _offset.x, _offset.y, 0.0f ),
+					Game.Player.transform.position + new Vector3( _offset.x, _offset.y, 0.0f ),
 					_direction,
-					Instance.m_groundHitChecker,
+					Game.Player.m_groundHitChecker,
 					m_stickDistance,
 					m_wallCollisionMask ) != 0;
 			}

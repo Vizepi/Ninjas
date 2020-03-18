@@ -1,4 +1,4 @@
-﻿// © Copyright 2019 J. KIEFFER - All Rights Reserved.
+﻿// Copyright 2019 J. KIEFFER - All Rights Reserved.
 using System;
 using UnityEngine;
 
@@ -25,14 +25,11 @@ namespace vzp {
 			}
 
 			public override bool TryTransition( MotionState _fromState ) {
-				InputManager inputs = InputManager.Instance;
-				Debug.Assert( inputs );
+				if ( Game.Player.IsGrounded&& (
+					Game.InputManager[ InputManager.ActionName.Left ].state.state.isPressed ||
+					Game.InputManager[ InputManager.ActionName.Right ].state.state.isPressed ) ) {
 
-				if ( Instance.IsGrounded() && (
-					inputs[ InputManager.ActionName.Left ].state.state.isPressed ||
-					inputs[ InputManager.ActionName.Right ].state.state.isPressed ) ) {
-
-					Instance.SetState( GetStateName() );
+					Game.Player.SetState( GetStateName() );
 					return true;
 				}
 
@@ -47,43 +44,40 @@ namespace vzp {
 
 			//=============================================================================================
 			public override void OnEnable() {
-				Instance.m_animator.Play( m_runAnimationKey );
+				Game.Player.m_animator.Play( m_runAnimationKey );
 				m_currentMotion = 1.0f;
 			}
 
 			//=============================================================================================
 			public override void Update() {
-				if ( !Instance.IsGrounded() ) {
+				if ( !Game.Player.IsGrounded) {
 					if ( //Instance.GetMotionState( StateName.Climb ).TryTransition() ||
-						Instance.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ) {
+						Game.Player.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ) {
 						return;
 					}
 					return;
 				}
 
-				InputManager inputs = InputManager.Instance;
-				Debug.Assert( inputs );
-
 				float motion = 0.0f;
-				motion -= inputs[ InputManager.ActionName.Left ].state.state.isPressed ? 1.0f : 0.0f;
-				motion += inputs[ InputManager.ActionName.Right ].state.state.isPressed ? 1.0f : 0.0f;
+				motion -= Game.InputManager[ InputManager.ActionName.Left ].state.state.isPressed ? 1.0f : 0.0f;
+				motion += Game.InputManager[ InputManager.ActionName.Right ].state.state.isPressed ? 1.0f : 0.0f;
 
-				Instance.SetHorizontalMotion( m_runningSpeed, motion );
+				Game.Player.SetHorizontalMotion( m_runningSpeed, motion );
 
 				if ( motion == 0.0f ) {
-					if ( Mathf.Approximately( Instance.m_rigidbody.velocity.x, 0.0f ) ) {
+					if ( Mathf.Approximately( Game.Player.m_rigidbody.velocity.x, 0.0f ) ) {
 						// Check state transitions
-						if ( Instance.GetMotionState( MotionState.Idle ).TryTransition( GetStateName() ) ) {
+						if ( Game.Player.GetMotionState( MotionState.Idle ).TryTransition( GetStateName() ) ) {
 							return;
 						}
 					} else if ( m_currentMotion != 0.0f ) {
-						Instance.m_animator.Play( m_brakeAnimationKey );
+						Game.Player.m_animator.Play( m_brakeAnimationKey );
 					}
 				}
 
 				// Check if player is jumping or climbing
-				if ( Instance.GetMotionState( MotionState.Climb ).TryTransition( GetStateName() ) ||
-					Instance.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ) {
+				if ( Game.Player.GetMotionState( MotionState.Climb ).TryTransition( GetStateName() ) ||
+					Game.Player.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ) {
 					return;
 				}
 

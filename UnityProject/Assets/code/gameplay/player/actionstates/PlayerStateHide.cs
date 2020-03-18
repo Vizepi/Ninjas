@@ -1,4 +1,4 @@
-﻿// © Copyright 2019 J. KIEFFER - All Rights Reserved.
+﻿// Copyright 2019 J. KIEFFER - All Rights Reserved.
 using System;
 using UnityEngine;
 
@@ -37,12 +37,9 @@ namespace vzp {
 
 			//=============================================================================================
 			public override bool TryTransition( ActionState _fromState ) {
-				InputManager inputs = InputManager.Instance;
-				Debug.Assert( inputs );
-
-				if ( inputs[ InputManager.ActionName.Hide ].state.state.justPressed ) {
+				if ( Game.InputManager[ InputManager.ActionName.Hide ].state.state.justPressed ) {
 					if ( CastHideout() ) {
-						Instance.SetState( GetStateName() );
+						Game.Player.SetState( GetStateName() );
 						return true;
 					}
 				}
@@ -52,18 +49,15 @@ namespace vzp {
 
 			//=============================================================================================
 			public override void OnEnable() {
-				Instance.m_animator.Play( m_enterAnimation );
-				Instance.m_rigidbody.isKinematic = true;
-				Instance.m_rigidbody.velocity = Vector2.zero;
+				Game.Player.m_animator.Play( m_enterAnimation );
+				Game.Player.m_rigidbody.isKinematic = true;
+				Game.Player.m_rigidbody.velocity = Vector2.zero;
 				m_timer = m_hidingTime;
 				m_hideState = State.Hiding;
 			}
 
 			//=============================================================================================
 			public override void Update() {
-				InputManager inputs = InputManager.Instance;
-				Debug.Assert( inputs );
-
 				switch ( m_hideState ) {
 				case State.Hiding:
 					m_timer -= Time.deltaTime;
@@ -72,23 +66,23 @@ namespace vzp {
 					}
 					break;
 				case State.Hidden:
-					Instance.m_rigidbody.isKinematic = false;
-					if ( Instance.GetActionState( ActionState.Attack ).TryTransition( GetStateName() ) ||
-						Instance.GetActionState( ActionState.Jutsu ).TryTransition( GetStateName() ) ) {
+					Game.Player.m_rigidbody.isKinematic = false;
+					if ( Game.Player.GetActionState( ActionState.Attack ).TryTransition( GetStateName() ) ||
+						Game.Player.GetActionState( ActionState.Jutsu ).TryTransition( GetStateName() ) ) {
 						m_hideState = State.Out;
 						return;
 					}
-					if ( Instance.GetMotionState( MotionState.Run ).TryTransition( MotionState.Idle ) ||
-						Instance.GetMotionState( MotionState.Jump ).TryTransition( MotionState.Idle ) ||
-						Instance.GetMotionState( MotionState.Climb ).TryTransition( MotionState.Idle ) ) {
-						Instance.SetState( ActionState.None );
+					if ( Game.Player.GetMotionState( MotionState.Run ).TryTransition( MotionState.Idle ) ||
+						Game.Player.GetMotionState( MotionState.Jump ).TryTransition( MotionState.Idle ) ||
+						Game.Player.GetMotionState( MotionState.Climb ).TryTransition( MotionState.Idle ) ) {
+						Game.Player.SetState( ActionState.None );
 						m_hideState = State.Out;
 						return;
 					}
-					Instance.m_rigidbody.isKinematic = true;
+					Game.Player.m_rigidbody.isKinematic = true;
 					break;
 				case State.Out:
-					Instance.SetState( ActionState.None );
+					Game.Player.SetState( ActionState.None );
 					break;
 				}
 			}
@@ -99,7 +93,7 @@ namespace vzp {
 				Physics2D.queriesHitTriggers = true;
 
 				return ( Physics2D.OverlapPointNonAlloc(
-							VectorConverter.ToVector2( Instance.transform.position ) + Instance.m_capsule.offset,
+							VectorConverter.ToVector2( Game.Player.transform.position ) + Game.Player.m_capsule.offset,
 							m_colliders,
 							m_collisionMask ) != 0 );
 			}

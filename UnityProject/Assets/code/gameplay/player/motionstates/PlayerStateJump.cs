@@ -1,4 +1,4 @@
-﻿// © Copyright 2019 J. KIEFFER - All Rights Reserved.
+﻿// Copyright 2019 J. KIEFFER - All Rights Reserved.
 using System;
 using UnityEngine;
 
@@ -38,33 +38,30 @@ namespace vzp {
 
 			//=============================================================================================
 			public override bool TryTransition( MotionState _fromState ) {
-				InputManager inputs = InputManager.Instance;
-				Debug.Assert( inputs );
-
 				bool doJump = false;
 				Vector2 impulseDirection = Vector2.zero;
 
-				if ( Instance.IsGrounded() ) {
-					if ( inputs[InputManager.ActionName.Jump ].state.state.justPressed ) {
+				if ( Game.Player.IsGrounded) {
+					if ( Game.InputManager[ InputManager.ActionName.Jump ].state.state.justPressed ) {
 						impulseDirection.y = m_jumpForce;
 						m_hasExecutedFirstJump = false;
 						doJump = true;
 					}
 				} else if ( _fromState == MotionState.StickWall ) {
-					StateStickWall stateStickWall = Instance.GetMotionState( MotionState.StickWall ) as StateStickWall;
+					StateStickWall stateStickWall = Game.Player.GetMotionState( MotionState.StickWall ) as StateStickWall;
 
-					if ( inputs[ InputManager.ActionName.Jump ].state.state.justPressed ) {
+					if ( Game.InputManager[ InputManager.ActionName.Jump ].state.state.justPressed ) {
 						impulseDirection.y = m_wallJumpForce * Mathf.Sin( Mathf.Deg2Rad * m_wallJumpAngle );
 						impulseDirection.x = m_wallJumpForce * Mathf.Cos( Mathf.Deg2Rad * m_wallJumpAngle );
 						doJump = true;
 						m_hasExecutedFirstJump = false;
 					} else if ( stateStickWall.IsStickingOnLeftWall() ) {
-						if ( inputs[ InputManager.ActionName.Right ].state.state.justPressed ) {
+						if ( Game.InputManager[ InputManager.ActionName.Right ].state.state.justPressed ) {
 							doJump = true;
 							m_hasExecutedFirstJump = false;
 						}
 					} else {
-						if ( inputs[ InputManager.ActionName.Left ].state.state.justPressed ) {
+						if ( Game.InputManager[ InputManager.ActionName.Left ].state.state.justPressed ) {
 							doJump = true;
 							m_hasExecutedFirstJump = false;
 						}
@@ -77,12 +74,12 @@ namespace vzp {
 					m_hasExecutedFirstJump = false;
 					doJump = true;
 				} else if ( _fromState == MotionState.Climb ) {
-					if ( inputs[ InputManager.ActionName.Jump ].state.state.justPressed ) {
+					if ( Game.InputManager[ InputManager.ActionName.Jump ].state.state.justPressed ) {
 						impulseDirection.y = m_jumpForce;
 						m_hasExecutedFirstJump = false;
 						doJump = true;
-					} else if ( inputs[ InputManager.ActionName.Left ].state.state.justPressed ||
-						inputs[ InputManager.ActionName.Right ].state.state.justPressed ) {
+					} else if ( Game.InputManager[ InputManager.ActionName.Left ].state.state.justPressed ||
+						Game.InputManager[ InputManager.ActionName.Right ].state.state.justPressed ) {
 						m_hasExecutedFirstJump = false;
 						doJump = true;
 					}
@@ -90,7 +87,7 @@ namespace vzp {
 
 				if ( doJump ) {
 					ApplyJump( impulseDirection );
-					Instance.SetState( GetStateName() );
+					Game.Player.SetState( GetStateName() );
 				}
 
 				return doJump;
@@ -104,34 +101,31 @@ namespace vzp {
 
 			//=============================================================================================
 			public override void OnEnable() {
-				Instance.m_animator.Play( m_jumpAnimationKey );
+				Game.Player.m_animator.Play( m_jumpAnimationKey );
 			}
 
 			//=============================================================================================
 			public override void Update() {
-				InputManager inputs = InputManager.Instance;
-				Debug.Assert( inputs );
-
 				float motion = 0.0f;
-				motion -= inputs[ InputManager.ActionName.Left ].state.state.isPressed ? 1.0f : 0.0f;
-				motion += inputs[ InputManager.ActionName.Right ].state.state.isPressed ? 1.0f : 0.0f;
+				motion -= Game.InputManager[ InputManager.ActionName.Left ].state.state.isPressed ? 1.0f : 0.0f;
+				motion += Game.InputManager[ InputManager.ActionName.Right ].state.state.isPressed ? 1.0f : 0.0f;
 
-				Instance.SetHorizontalMotion( m_jumpAirSpeed, motion );
+				Game.Player.SetHorizontalMotion( m_jumpAirSpeed, motion );
 
 				m_afterJumpTimer -= Time.deltaTime;
 				if ( m_afterJumpTimer <= 0.0f ) {
 					if ( !m_hasExecutedFirstJump ) {
-						if ( inputs[ InputManager.ActionName.Jump ].state.state.justPressed ) {
+						if ( Game.InputManager[ InputManager.ActionName.Jump ].state.state.justPressed ) {
 							m_hasExecutedFirstJump = true;
 							ApplyJump( Vector2.up * m_doubleJumpForce );
 						}
 					}
 
 					// Check state transitions
-					if ( Instance.GetMotionState( MotionState.Idle ).TryTransition( GetStateName() ) ||
-						Instance.GetMotionState( MotionState.Run ).TryTransition( GetStateName() ) ||
-						Instance.GetMotionState( MotionState.StickWall ).TryTransition( GetStateName() ) ||
-						Instance.GetMotionState( MotionState.Climb ).TryTransition( GetStateName() ) ) {
+					if ( Game.Player.GetMotionState( MotionState.Idle ).TryTransition( GetStateName() ) ||
+						Game.Player.GetMotionState( MotionState.Run ).TryTransition( GetStateName() ) ||
+						Game.Player.GetMotionState( MotionState.StickWall ).TryTransition( GetStateName() ) ||
+						Game.Player.GetMotionState( MotionState.Climb ).TryTransition( GetStateName() ) ) {
 						return;
 					}
 				}
@@ -139,8 +133,8 @@ namespace vzp {
 
 			//=============================================================================================
 			void ApplyJump( Vector2 _force ) {
-				Instance.m_rigidbody.velocity = new Vector2( Instance.m_rigidbody.velocity.x, 0.0f );
-				Instance.m_rigidbody.AddForce( _force, ForceMode2D.Impulse );
+				Game.Player.m_rigidbody.velocity = new Vector2( Game.Player.m_rigidbody.velocity.x, 0.0f );
+				Game.Player.m_rigidbody.AddForce( _force, ForceMode2D.Impulse );
 				m_afterJumpTimer = m_afterJumpDelay;
 			}
 		}

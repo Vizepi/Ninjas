@@ -1,4 +1,4 @@
-﻿// © Copyright 2019 J. KIEFFER - All Rights Reserved.
+﻿// Copyright 2019 J. KIEFFER - All Rights Reserved.
 using System;
 using UnityEngine;
 
@@ -41,14 +41,11 @@ namespace vzp {
 
 			//=============================================================================================
 			public override bool TryTransition( MotionState _fromState ) {
-				InputManager inputs = InputManager.Instance;
-				Debug.Assert( inputs );
-
-				if ( inputs[ InputManager.ActionName.Up ].state.state.justPressed ||
-					inputs[ InputManager.ActionName.Down ].state.state.justPressed ) {
+				if ( Game.InputManager[ InputManager.ActionName.Up ].state.state.justPressed ||
+					Game.InputManager[ InputManager.ActionName.Down ].state.state.justPressed ) {
 
 					if ( CastLadder() ) {
-						Instance.SetState( GetStateName() );
+						Game.Player.SetState( GetStateName() );
 						return true;
 					}
 				}
@@ -65,26 +62,26 @@ namespace vzp {
 
 			//=============================================================================================
 			public override void OnEnable() {
-				Instance.m_animator.Play( m_idleAnimationKey );
-				Instance.m_rigidbody.isKinematic = true;
-				Instance.m_rigidbody.velocity = Vector2.zero;
+				Game.Player.m_animator.Play( m_idleAnimationKey );
+				Game.Player.m_rigidbody.isKinematic = true;
+				Game.Player.m_rigidbody.velocity = Vector2.zero;
 			}
 
 			//=============================================================================================
 			public override void Update() {
 				// Check state transitions
 				if ( !CastPlatforms() ) {
-					Instance.m_rigidbody.isKinematic = false;
-					if ( Instance.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ||
-						Instance.GetMotionState( MotionState.Run ).TryTransition( GetStateName() ) ) {
+					Game.Player.m_rigidbody.isKinematic = false;
+					if ( Game.Player.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ||
+						Game.Player.GetMotionState( MotionState.Run ).TryTransition( GetStateName() ) ) {
 						return;
 					}
-					Instance.m_rigidbody.isKinematic = true;
+					Game.Player.m_rigidbody.isKinematic = true;
 				}
 
 				if ( !CastLadder() ) {
-					Instance.m_rigidbody.isKinematic = false;
-					Instance.SetState( MotionState.Idle );
+					Game.Player.m_rigidbody.isKinematic = false;
+					Game.Player.SetState( MotionState.Idle );
 					return;
 				}
 
@@ -92,12 +89,12 @@ namespace vzp {
 				Collider2D currentLadder = m_ladderCasts[ 0 ];
 				Vector2 sqrDistFromLadder = Get2DSquareDistanceFrom3DBounds(
 					currentLadder.bounds,
-					Instance.transform.position );
+					Game.Player.transform.position );
 
 				for ( int i = 1; i < m_castCount; ++i ) {
 					Vector2 newSqrDist = Get2DSquareDistanceFrom3DBounds(
 					m_ladderCasts[ i ].bounds,
-					Instance.transform.position );
+					Game.Player.transform.position );
 
 					if ( newSqrDist.x + newSqrDist.y < sqrDistFromLadder.x + sqrDistFromLadder.y ) {
 						sqrDistFromLadder = newSqrDist;
@@ -105,7 +102,7 @@ namespace vzp {
 					}
 				}
 
-				float squareDistanceFromCenter = Instance.transform.position.x - currentLadder.bounds.center.x;
+				float squareDistanceFromCenter = Game.Player.transform.position.x - currentLadder.bounds.center.x;
 				squareDistanceFromCenter *= squareDistanceFromCenter;
 
 				// Move toward the ladder center
@@ -114,38 +111,35 @@ namespace vzp {
 					if ( motion * motion >= squareDistanceFromCenter ) {
 						motion = Mathf.Sqrt( squareDistanceFromCenter );
 					}
-					Vector3 position = Instance.transform.position;
+					Vector3 position = Game.Player.transform.position;
 					if ( position.x > currentLadder.bounds.center.x ) {
 						position.x -= motion;
 					} else {
 						position.x += motion;
 					}
-					Instance.transform.position = position;
+					Game.Player.transform.position = position;
 					squareDistanceFromCenter = position.x - currentLadder.bounds.center.x;
 					squareDistanceFromCenter *= squareDistanceFromCenter;
 				}
 
 				// Move up or down (or not)
 				if ( Mathf.Approximately( squareDistanceFromCenter, 0.0f ) ) {
-					InputManager inputs = InputManager.Instance;
-					Debug.Assert( inputs );
-
 					float motion = 0.0f;
 
-					if ( inputs[ InputManager.ActionName.Up ].state.state.isPressed && m_canClimbUp ) {
-						if ( !inputs[ InputManager.ActionName.Down ].state.state.isPressed ) {
+					if ( Game.InputManager[ InputManager.ActionName.Up ].state.state.isPressed && m_canClimbUp ) {
+						if ( !Game.InputManager[ InputManager.ActionName.Down ].state.state.isPressed ) {
 							motion += m_climbUpSpeed;
 						}
-					} else if ( inputs[ InputManager.ActionName.Down ].state.state.isPressed && m_canClimbDown ) {
-						if ( !inputs[ InputManager.ActionName.Up ].state.state.isPressed ) {
+					} else if ( Game.InputManager[ InputManager.ActionName.Down ].state.state.isPressed && m_canClimbDown ) {
+						if ( !Game.InputManager[ InputManager.ActionName.Up ].state.state.isPressed ) {
 							motion -= m_climbDownSpeed;
 						}
 					}
 
 					if ( motion != 0.0f ) {
-						Vector3 position = Instance.transform.position;
+						Vector3 position = Game.Player.transform.position;
 						position.y += motion * Time.deltaTime;
-						Instance.transform.position = position;
+						Game.Player.transform.position = position;
 					}
 				}
 			}
@@ -156,16 +150,16 @@ namespace vzp {
 				Physics2D.queriesHitTriggers = true;
 
 				m_castCount = Physics2D.OverlapPointNonAlloc(
-					VectorConverter.ToVector2( Instance.transform.position ) + new Vector2( 0.0f, -0.1f ),
+					VectorConverter.ToVector2( Game.Player.transform.position ) + new Vector2( 0.0f, -0.1f ),
 					m_ladderCasts,
 					m_ladderCollisionMask );
 
 				m_canClimbDown = m_castCount != 0;
 
 				int count = Physics2D.OverlapCapsuleNonAlloc(
-					VectorConverter.ToVector2( Instance.transform.position ) + Instance.m_capsule.offset,
-					Instance.m_capsule.size,
-					Instance.m_capsule.direction,
+					VectorConverter.ToVector2( Game.Player.transform.position ) + Game.Player.m_capsule.offset,
+					Game.Player.m_capsule.size,
+					Game.Player.m_capsule.direction,
 					0.0f,
 					m_ladderCasts,
 					m_ladderCollisionMask );
@@ -198,9 +192,9 @@ namespace vzp {
 			//=============================================================================================
 			bool CastPlatforms() {
 				return Physics2D.OverlapCapsuleNonAlloc(
-					VectorConverter.ToVector2( Instance.transform.position ) + Instance.m_capsule.offset,
-					Instance.m_capsule.size,
-					Instance.m_capsule.direction,
+					VectorConverter.ToVector2( Game.Player.transform.position ) + Game.Player.m_capsule.offset,
+					Game.Player.m_capsule.size,
+					Game.Player.m_capsule.direction,
 					0.0f,
 					m_platformCast,
 					m_platformsCollisionMask ) != 0;

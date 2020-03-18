@@ -1,4 +1,4 @@
-﻿// © Copyright 2019 J. KIEFFER - All Rights Reserved.
+﻿// Copyright 2019 J. KIEFFER - All Rights Reserved.
 using System;
 using UnityEngine;
 
@@ -20,20 +20,17 @@ namespace vzp {
 
 			//=============================================================================================
 			public override bool TryTransition( MotionState _fromState ) {
-				InputManager inputs = InputManager.Instance;
-				Debug.Assert( inputs );
-
-				if ( !Instance.IsGrounded() ||
-					inputs[ InputManager.ActionName.Left ].state.state.isPressed ||
-					inputs[ InputManager.ActionName.Right ].state.state.isPressed ||
-					inputs[ InputManager.ActionName.Up ].state.state.isPressed ||
-					inputs[ InputManager.ActionName.Down ].state.state.isPressed ||
-					inputs[ InputManager.ActionName.Jump ].state.state.isPressed ) {
+				if ( !Game.Player.IsGrounded||
+					Game.InputManager[ InputManager.ActionName.Left ].state.state.isPressed ||
+					Game.InputManager[ InputManager.ActionName.Right ].state.state.isPressed ||
+					Game.InputManager[ InputManager.ActionName.Up ].state.state.isPressed ||
+					Game.InputManager[ InputManager.ActionName.Down ].state.state.isPressed ||
+					Game.InputManager[ InputManager.ActionName.Jump ].state.state.isPressed ) {
 					// There is a motion query, move, climb or jump
 					return false;
 				}
 
-				Instance.SetState( GetStateName() );
+				Game.Player.SetState( GetStateName() );
 
 				return true;
 			}
@@ -45,15 +42,15 @@ namespace vzp {
 
 			//=============================================================================================
 			public override void OnEnable() {
-				Instance.m_animator.Play( m_idleAnimationKey );
+				Game.Player.m_animator.Play( m_idleAnimationKey );
 			}
 
 			//=============================================================================================
 			public override void Update() {
 				// Check state transitions
-				if ( Instance.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ||
-					Instance.GetMotionState( MotionState.Climb ).TryTransition( GetStateName() ) ||
-					Instance.GetMotionState( MotionState.Run ).TryTransition( GetStateName() ) ) {
+				if ( Game.Player.GetMotionState( MotionState.Jump ).TryTransition( GetStateName() ) ||
+					Game.Player.GetMotionState( MotionState.Climb ).TryTransition( GetStateName() ) ||
+					Game.Player.GetMotionState( MotionState.Run ).TryTransition( GetStateName() ) ) {
 					return;
 				}
 			}

@@ -1,4 +1,4 @@
-﻿// © Copyright 2019 J. KIEFFER - All Rights Reserved.
+﻿// Copyright 2019 J. KIEFFER - All Rights Reserved.
 using System;
 using UnityEngine;
 
@@ -37,12 +37,12 @@ namespace vzp {
 			public void Awake() {
 				Debug.Assert( m_camera );
 
-				m_position = Instance.transform.position;
+				m_position = Game.Player.transform.position;
 
 				if ( m_useCustomOffset ) {
 					m_offset = m_customOffset;
 				} else {
-					m_offset = m_camera.position - Instance.transform.position;
+					m_offset = m_camera.position - Game.Player.transform.position;
 				}
 
 				m_history = new Vector4[ m_historySize ];
@@ -65,7 +65,7 @@ namespace vzp {
 				Vector3 position = Vector3.Lerp( m_camera.position - m_offset, m_position, m_acceleration * Time.deltaTime );
 
 				m_camera.position = position + m_offset;
-				m_camera.LookAt( Instance.transform.position, Vector3.up );
+				m_camera.LookAt( Game.Player.transform.position, Vector3.up );
 			}
 
 			//=============================================================================================
@@ -74,7 +74,7 @@ namespace vzp {
 				if ( time > m_historyNextSamplingTime ) {
 					if ( time - m_historyNextSamplingTime > m_historyTimeBetweenSamples * m_history.Length ) {
 						// Big hang, reset position
-						Vector3 playerPosition = Instance.transform.position;
+						Vector3 playerPosition = Game.Player.transform.position;
 
 						for ( int i = 0; i < m_history.Length; ++i ) {
 							m_history[ i ] = new Vector4(
@@ -93,7 +93,7 @@ namespace vzp {
 							m_historyNextSamplingTime += m_historyTimeBetweenSamples;
 
 							// Update ring buffer
-							Vector3 playerPosition = Instance.transform.position;
+							Vector3 playerPosition = Game.Player.transform.position;
 
 							Vector4 first = m_history[ m_historyIndex % m_history.Length ];
 							Vector4 last = m_history[ ( m_historyIndex - 1 ) % m_history.Length ];
