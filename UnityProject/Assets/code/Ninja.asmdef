@@ -1,0 +1,21 @@
+{
+    "name": "Ninja",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [
+        "LinuxStandalone64",
+        "Lumin",
+        "macOSStandalone",
+        "Stadia",
+        "tvOS",
+        "WebGL",
+        "WindowsStandalone32"
+    ],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
