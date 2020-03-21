@@ -15,7 +15,7 @@ namespace vzp {
 			StickWall,
 			Climb,
 
-			// Keep at the end
+			// Keep at the end and up to date
 			FirstMotionState = Idle,
 			LastMotionState = Climb
 		}
@@ -28,7 +28,7 @@ namespace vzp {
 			Hide,
 			Teleport,
 
-			// Keep at the end
+			// Keep at the end and up to date
 			FirstActionState = None,
 			LastActionState = Teleport
 		}
