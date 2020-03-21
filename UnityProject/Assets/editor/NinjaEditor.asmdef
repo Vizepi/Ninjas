@@ -1,0 +1,17 @@
+{
+    "name": "NinjaEditor",
+    "references": [
+        "GUID:dd0d97710b6e59c4bb9f41a7a3dcbe64"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
