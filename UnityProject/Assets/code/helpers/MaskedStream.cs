@@ -9,7 +9,7 @@ namespace vzp {
 		long m_randX = 0;
 		const long kRandA = 16807;
 		const long kRandM = 2147483647;
-
+		static bool s_debugging = true;
 
 		//=============================================================================================
 		static byte[] s_lookup = new byte[] {
@@ -57,12 +57,16 @@ namespace vzp {
 		}
 
 		public override int Read( byte[] buffer, int offset, int count ) {
-			m_randX = Position ^ m_seed;
-			int result = m_internal.Read( buffer, offset, count );
-			for ( int i = 0; i < result; ++i ) {
-				buffer[ i ] ^= s_lookup[ Rand() % s_lookup.Length ];
+			if ( s_debugging ) {
+				return m_internal.Read( buffer, offset, count );
+			} else {
+				m_randX = Position ^ m_seed;
+				int result = m_internal.Read( buffer, offset, count );
+				for ( int i = 0; i < result; ++i ) {
+					buffer[ i ] ^= s_lookup[ Rand() % s_lookup.Length ];
+				}
+				return result;
 			}
-			return result;
 		}
 
 		public override long Seek( long offset, SeekOrigin origin ) {
@@ -74,15 +78,19 @@ namespace vzp {
 		}
 
 		public override void Write( byte[] buffer, int offset, int count ) {
-			long position = Position;
-			m_randX = position ^ m_seed;
-			for ( int i = 0; i < count; ++i ) {
-				buffer[ i ] ^= s_lookup[ Rand() % s_lookup.Length ];
-			}
-			m_internal.Write( buffer, offset, count );
-			m_randX = position ^ m_seed;
-			for ( int i = 0; i < count; ++i ) {
-				buffer[ i ] ^= s_lookup[ Rand() % s_lookup.Length ];
+			if ( s_debugging ) {
+				m_internal.Write( buffer, offset, count );
+			} else {
+				long position = Position;
+				m_randX = position ^ m_seed;
+				for ( int i = 0; i < count; ++i ) {
+					buffer[ i ] ^= s_lookup[ Rand() % s_lookup.Length ];
+				}
+				m_internal.Write( buffer, offset, count );
+				m_randX = position ^ m_seed;
+				for ( int i = 0; i < count; ++i ) {
+					buffer[ i ] ^= s_lookup[ Rand() % s_lookup.Length ];
+				}
 			}
 		}
 
