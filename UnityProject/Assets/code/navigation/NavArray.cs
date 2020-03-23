@@ -21,7 +21,6 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		public const int kNodeSize = 10;
 		public const long kFileMask = 1684235984;
 		public const string kAssetPath = "navigation/";
 		public const string kAssetExtension = ".nav";
@@ -66,7 +65,7 @@ namespace vzp {
 
 		//=============================================================================================
 		public static int NeededBytesForSize( int _broadphaseWidth, int _broadphaseHeight ) {
-			return ( ( ( _broadphaseWidth * _broadphaseHeight ) + 7 ) & 7 ) >> 3; ;
+			return ( ( ( _broadphaseWidth * _broadphaseHeight ) + 7 ) & ~7 ) >> 3;
 		}
 
 		//=============================================================================================
@@ -124,14 +123,17 @@ namespace vzp {
 								for ( int x = 0; x < broadphase.width; ++x, ++bit ) {
 									// Select only blocks for wich the block bit is set
 									int byteIndex = ByteIndexInBlockBitsForBitIndex( bit );
-									int bitIndex = BitIndexInBlockBitForBitIndex( bit );
-									if ( ( blockBits[ byteIndex ] & bitIndex ) != 0 ) {
+									byte bitFlag = BitIndexInBlockBitForBitIndex( bit );
+
+									if ( ( blockBits[ byteIndex ] & bitFlag ) != 0 ) {
 										byte[] block = reader.ReadBytes( blockSize );
 										m_cells[ x, y ] = new Cell[ cellSquareSize, cellSquareSize ];
+
 										for ( int cy = 0; cy < cellSquareSize; ++cy ) {
 											int sy = cy * cellSquareSize;
 											for ( int cx = 0; cx < cellSquareSize; ++cx ) {
-												int sx = ( sy + cx ) * 2;
+												int sx = ( sy + cx ) * sizeof( short );
+
 												m_cells[ x, y ][ cx, cy ] = ( Cell )( ( block[ sx ] << 8 ) | ( block[ sx + 1 ] ) );
 											}
 										}
@@ -142,7 +144,11 @@ namespace vzp {
 					}
 				}
 			} catch ( Exception _e ) {
+#if UNITY_EDITOR
+				Debug.LogError( "[NAVARRAY] Failed to read NavArray asset: " + _e.Message + "\n" + _e.StackTrace );
+#else
 				Debug.LogError( "[NAVARRAY] Failed to read NavArray asset: " + _e.Message );
+#endif
 				return false;
 			}
 			return true;
@@ -152,10 +158,10 @@ namespace vzp {
 		//=============================================================================================
 		void OnDrawGizmosCommon() {
 			// Broadphase
-			Vector3 p1 = new Vector3( m_broadphase.xMin * kNodeSize, m_broadphase.yMin * kNodeSize, 0.0f );
-			Vector3 p2 = new Vector3( m_broadphase.xMin * kNodeSize, m_broadphase.yMax * kNodeSize, 0.0f );
-			Vector3 p3 = new Vector3( m_broadphase.xMax * kNodeSize, m_broadphase.yMax * kNodeSize, 0.0f );
-			Vector3 p4 = new Vector3( m_broadphase.xMax * kNodeSize, m_broadphase.yMin * kNodeSize, 0.0f );
+			Vector3 p1 = new Vector3( m_broadphase.xMin * m_cellSquareSize, m_broadphase.yMin * m_cellSquareSize, 0.0f );
+			Vector3 p2 = new Vector3( m_broadphase.xMin * m_cellSquareSize, m_broadphase.yMax * m_cellSquareSize, 0.0f );
+			Vector3 p3 = new Vector3( m_broadphase.xMax * m_cellSquareSize, m_broadphase.yMax * m_cellSquareSize, 0.0f );
+			Vector3 p4 = new Vector3( m_broadphase.xMax * m_cellSquareSize, m_broadphase.yMin * m_cellSquareSize, 0.0f );
 			Gizmos.DrawLine( p1, p2 );
 			Gizmos.DrawLine( p2, p3 );
 			Gizmos.DrawLine( p3, p4 );
