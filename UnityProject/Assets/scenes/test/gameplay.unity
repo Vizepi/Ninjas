@@ -5487,10 +5487,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_broadphase:
-    x: -2
-    y: -2
-    width: 4
-    height: 5
+    x: -3
+    y: 0
+    width: 6
+    height: 4
+  m_cellSquareSize: 5
 --- !u!1001 &903025239
 PrefabInstance:
   m_ObjectHideFlags: 0
