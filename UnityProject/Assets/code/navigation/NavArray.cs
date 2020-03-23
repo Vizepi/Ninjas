@@ -22,7 +22,7 @@ namespace vzp {
 
 		//=============================================================================================
 		public const long kFileMask = 1684235984;
-		public const string kAssetPath = "navigation/";
+		public const string kAssetPath = "generated/navigation/";
 		public const string kAssetExtension = ".nav";
 		const string kScenesPath = "Assets/scenes/";
 
@@ -53,6 +53,7 @@ namespace vzp {
 		//=============================================================================================
 		void Awake() {
 			string sceneName = ScenePathToNavPath( SceneManager.GetActiveScene().path );
+			Debug.Log( sceneName );
 			TextAsset asset = Resources.Load<TextAsset>( sceneName );
 
 			if ( asset == null ) {
