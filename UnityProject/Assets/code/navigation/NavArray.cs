@@ -9,12 +9,13 @@ namespace vzp {
 		//=============================================================================================
 		[Flags]
 		public enum Cell {
+			Empty			= 0,
 			IsGround		= 0b00000001,
 			IsCeiling		= 0b00000010,
 			HasLeftWall		= 0b00000100,
 			HasRightWall	= 0b00001000,
 			HasLadder		= 0b00010000,
-			IsHideout		= 0b00100000,
+			HasHideout		= 0b00100000,
 			IsGroundThin	= 0b01000000,
 			IsCeilingThin	= 0b10000000
 		}
@@ -74,8 +75,8 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		public static int BitIndexInBlockBitForBitIndex( int _bitIndex ) {
-			return 1 << ( _bitIndex & 7 );
+		public static byte BitIndexInBlockBitForBitIndex( int _bitIndex ) {
+			return ( byte )( 1 << ( _bitIndex & 7 ) );
 		}
 
 		//=============================================================================================
