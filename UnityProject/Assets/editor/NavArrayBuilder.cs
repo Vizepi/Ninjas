@@ -17,8 +17,14 @@ namespace vzp {
 		static Tuple<int, NavArray.Cell>[] s_groundLayerToCellMask = null;
 
 		//=============================================================================================
-		[ MenuItem( "Ninja/Build Navigation" )]
+		static void Log( string _msg ) {
+			Debug.Log( "[NAVARRAY] " + _msg );
+		}
+
+		//=============================================================================================
+		[MenuItem( "Ninja/Build Navigation" )]
 		public static void Build() {
+			Log( "Initializing build" );
 			string filePath = NavArray.ScenePathToNavPath( SceneManager.GetActiveScene().path );
 			string fullFilePath = EditorPaths.GetResourcePath( filePath ) + ".bytes";
 			EditorPaths.EnsurePathExists( EditorPaths.GetResourceDirectory( filePath ) );
@@ -30,6 +36,8 @@ namespace vzp {
 				return;
 			}
 
+			Log( "Starting computation" );
+
 			try {
 				using ( FileStream file = new FileStream( fullFilePath, FileMode.Create, FileAccess.Write ) ) {
 					using ( MaskedStream masked = new MaskedStream( file, NavArray.kFileMask ) ) {
@@ -39,9 +47,11 @@ namespace vzp {
 					}
 				}
 			} catch ( Exception _e ) {
-				Debug.LogError( "[NAVARRAY] Failed to build navigation: " + _e.Message );
+				Debug.LogError( "[NAVARRAY] Failed to build navigation: " + _e.Message + "\n" + _e.StackTrace );
 				return;
 			}
+
+			Log( "Build complete. Importing asset" );
 
 			AssetDatabase.ImportAsset( EditorPaths.kResourcePath + filePath + ".bytes" );
 		}
@@ -75,16 +85,21 @@ namespace vzp {
 
 		//=============================================================================================
 		static void Build( NavArray _nav, BinaryWriter _writer ) {
-			WriteHeader( _nav, _writer );
-
 			int cellSquareSize = _nav.CellSquareSize;
 			RectInt broadphase = _nav.Broadphase;
+			int blockBitCount = NavArray.NeededBytesForSize( broadphase.width, broadphase.height );
+
+			Log( "Building " + broadphase.width + " x " + broadphase.height + " entries" );
+
+			WriteHeader( _nav, _writer );
+
+			Log( "Allocating memory (" + ( broadphase.width * broadphase.height ) + " entries, " + blockBitCount + " bit bytes)" );
 
 			// Allocate blocks
 			NavArray.Cell[,][,] cells = new NavArray.Cell[ broadphase.width, broadphase.height ][,];
 
 			// Allocate bits
-			byte[] blockBits = new byte[ NavArray.NeededBytesForSize( broadphase.width, broadphase.height ) ];
+			byte[] blockBits = new byte[ blockBitCount ];
 
 			// Compute
 			ComputeCells( _nav, cells, blockBits );
@@ -98,6 +113,7 @@ namespace vzp {
 
 		//=============================================================================================
 		static void WriteHeader( NavArray _nav, BinaryWriter _writer ) {
+			Log( "Writing header" );
 			// Write version
 			_writer.Write( kVersion );
 
@@ -117,6 +133,8 @@ namespace vzp {
 			int cellSquareSize = _nav.CellSquareSize;
 			RectInt broadphase = _nav.Broadphase;
 
+			Log( "Computing cells" );
+
 			// For each entry in the array
 			for ( int y = 0, bit = 0; y < broadphase.height; ++y ) {
 				for ( int x = 0; x < broadphase.width; ++x, ++bit ) {
@@ -126,16 +144,18 @@ namespace vzp {
 					bool hasNonEmpty = false;
 					for ( int cy = 0; cy < cellSquareSize; ++cy ) {
 						for ( int cx = 0; cx < cellSquareSize; ++cx ) {
-							Vector2 cellCenter = new Vector2( x * cellSquareSize + cx + 0.5f, y * cellSquareSize + cy + 0.5f );
+							Vector2 cellCenter = new Vector2( ( x + broadphase.xMin ) * cellSquareSize + cx + 0.5f, ( y + broadphase.yMin ) * cellSquareSize + cy + 0.5f );
 							NavArray.Cell cell = CastCell( cellCenter );
 							_cells[ x, y ][ cx, cy ] = cell;
 							hasNonEmpty |= ( cell != NavArray.Cell.Empty );
 						}
 					}
 
-					// Write block bit
+					// Set block bit
 					if ( hasNonEmpty ) {
-						_blockBits[ NavArray.ByteIndexInBlockBitsForBitIndex( bit ) ] |= NavArray.BitIndexInBlockBitForBitIndex( bit );
+						int byteIndex = NavArray.ByteIndexInBlockBitsForBitIndex( bit );
+						byte bitFlag = NavArray.BitIndexInBlockBitForBitIndex( bit );
+						_blockBits[ byteIndex ] |= bitFlag;
 					}
 				}
 			}
@@ -174,10 +194,10 @@ namespace vzp {
 			NavArray.Cell mask = NavArray.Cell.Empty;
 
 			for ( int i = 0; i < _castCount; ++i ) {
-				int objectLayer = s_hits[ i ].gameObject.layer;
+				int objectLayerMask = 1 << s_hits[ i ].gameObject.layer;
 
 				foreach ( Tuple<int, NavArray.Cell> layerToCellMaks in _layerToCellMask ) {
-					if ( ( objectLayer & layerToCellMaks.Item1 ) != 0 ) {
+					if ( ( objectLayerMask & layerToCellMaks.Item1 ) != 0 ) {
 						mask |= layerToCellMaks.Item2;
 					}
 				}
@@ -208,18 +228,26 @@ namespace vzp {
 		static void WriteBlocks( NavArray _nav, NavArray.Cell[,][,] _cells, byte[] _blockBits, BinaryWriter _writer ) {
 			int cellSquareSize = _nav.CellSquareSize;
 			RectInt broadphase = _nav.Broadphase;
-
 			int numBlocks = broadphase.width * broadphase.height;
-			byte[] block = new byte[ cellSquareSize * cellSquareSize ];
+			int blockSize = sizeof( short ) * cellSquareSize * cellSquareSize;
+
+			Log( "Writing blocks" );
+
 			for ( int y = 0, bit = 0; y < broadphase.height; ++y ) {
 				for ( int x = 0; x < broadphase.width; ++x, ++bit ) {
-					if ( ( _blockBits[ NavArray.ByteIndexInBlockBitsForBitIndex( bit ) ] & NavArray.BitIndexInBlockBitForBitIndex( bit ) ) != 0 ) {
+					int byteIndex = NavArray.ByteIndexInBlockBitsForBitIndex( bit );
+					byte bitFlag = NavArray.BitIndexInBlockBitForBitIndex( bit );
+
+					if ( ( _blockBits[ byteIndex ] & bitFlag ) != 0 ) {
 						NavArray.Cell[,] array = _cells[ x, y ];
+						byte[] block = new byte[ blockSize ];
+
 						for ( int cy = 0; cy < cellSquareSize; ++cy ) {
 							int sy = cy * cellSquareSize;
 							for ( int cx = 0; cx < cellSquareSize; ++cx ) {
-								int sx = ( sy + cx ) * 2;
+								int sx = ( sy + cx ) * sizeof( short );
 								NavArray.Cell cell = array[ cx, cy ];
+
 								block[ sx ] = ( byte )( ( int )cell >> 8 );
 								block[ sx + 1 ] = ( byte )( ( int )cell & 0xff );
 							}
