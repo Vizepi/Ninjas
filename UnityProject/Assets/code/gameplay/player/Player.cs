@@ -121,7 +121,6 @@ namespace vzp {
 		Rigidbody2D m_rigidbody = null;
 		CapsuleCollider2D m_capsule = null;
 		RaycastHit2D[] m_groundHitChecker = new RaycastHit2D[ 1 ];
-		bool m_isGrounded = true;
 		float m_horizontalMotion = 0.0f;
 		float m_horizontalMotionDirection = 0.0f;
 
@@ -136,12 +135,11 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		public bool IsGrounded {
-			get { return m_isGrounded; }
-		}
+		public bool IsGrounded { get; private set; }
 
 		//=============================================================================================
 		public override void OnAwake() {
+			IsGrounded = true;
 			m_animator = GetComponent<Animator>();
 			Debug.Assert( m_animator );
 			m_rigidbody = GetComponent<Rigidbody2D>();
@@ -192,7 +190,7 @@ namespace vzp {
 			m_actionStates[ ( int )m_currentActionState ]?.Update();
 
 			ApplyMotion();
-			m_isGrounded = Physics2D.RaycastNonAlloc(
+			IsGrounded = Physics2D.RaycastNonAlloc(
 				m_rigidbody.position,
 				Vector2.down,
 				m_groundHitChecker,
