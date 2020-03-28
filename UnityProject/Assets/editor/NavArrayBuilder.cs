@@ -20,9 +20,17 @@ namespace vzp {
 		static Tuple<int, NavArrayCellData>[] s_groundLayerToCellMask = null;
 		static Tuple<int, NavArrayCellData>[] s_ceilingLayerToCellMask = null;
 
+		static string s_log;
+
 		//=============================================================================================
 		static void Log( string _msg ) {
-			Debug.Log( "[NAVARRAY] " + _msg );
+			s_log += "[NAVARRAY] " + _msg + "\n";
+		}
+
+		//=============================================================================================
+		static void EmitLog() {
+			Debug.Log( s_log );
+			s_log = "";
 		}
 
 		//=============================================================================================
@@ -51,6 +59,7 @@ namespace vzp {
 					}
 				}
 			} catch ( Exception _e ) {
+				EmitLog();
 				Debug.LogError( "[NAVARRAY] Failed to build navigation: " + _e.Message + "\n" + _e.StackTrace );
 				return;
 			}
@@ -58,6 +67,8 @@ namespace vzp {
 			Log( "Build complete. Importing asset" );
 
 			AssetDatabase.ImportAsset( EditorPaths.kResourcePath + filePath + ".bytes" );
+
+			EmitLog();
 		}
 
 		//=============================================================================================
@@ -71,14 +82,16 @@ namespace vzp {
 			s_hideoutLayerMask = LayerMask.GetMask( "Hideout" );
 
 			s_groundLayerToCellMask = new Tuple<int, NavArrayCellData>[] {
-				new Tuple<int, NavArrayCellData>( s_groundLayerMask, NavArrayCellData.IsGround ),
-				new Tuple<int, NavArrayCellData>( s_thinGroundLayerMask, NavArrayCellData.IsGround | NavArrayCellData.IsGroundThin )
+				new Tuple<int, NavArrayCellData>( s_groundLayerMask, NavArrayCellData.GroundFlag ),
+				new Tuple<int, NavArrayCellData>( s_thinGroundLayerMask, NavArrayCellData.GroundFlag | NavArrayCellData.ThinGroundFlag )
 			};
 
 			s_ceilingLayerToCellMask = new Tuple<int, NavArrayCellData>[] {
-				new Tuple<int, NavArrayCellData>( s_groundLayerMask, NavArrayCellData.IsCeiling ),
-				new Tuple<int, NavArrayCellData>( s_thinGroundLayerMask, NavArrayCellData.IsCeiling | NavArrayCellData.IsCeilingThin )
+				new Tuple<int, NavArrayCellData>( s_groundLayerMask, NavArrayCellData.CeilingFlag ),
+				new Tuple<int, NavArrayCellData>( s_thinGroundLayerMask, NavArrayCellData.CeilingFlag | NavArrayCellData.ThinCeilingFlag )
 			};
+
+			s_log = "";
 		}
 
 		//=============================================================================================
@@ -253,7 +266,7 @@ namespace vzp {
 
 			// Cast wall
 			if ( GenericBoxCast( position, new Vector2( 0.95f, 0.95f ), s_wallLayerMask ) ) {
-				return _left ? NavArrayCellData.HasLeftWall : NavArrayCellData.HasRightWall;
+				return _left ? NavArrayCellData.LeftWallFlag : NavArrayCellData.RightWallFlag;
 			}
 
 			return NavArrayCellData.Empty;
@@ -262,7 +275,7 @@ namespace vzp {
 		//=============================================================================================
 		static NavArrayCellData CastLadder( Vector2 _center ) {
 			if ( GenericBoxCast( _center, new Vector2( 0.95f, 0.09f ), s_ladderLayerMask ) ) {
-				return NavArrayCellData.HasLadder;
+				return NavArrayCellData.LadderFlag;
 			}
 			return NavArrayCellData.Empty;
 		}
@@ -270,7 +283,7 @@ namespace vzp {
 		//=============================================================================================
 		static NavArrayCellData CastHideout( Vector2 _center ) {
 			if ( GenericBoxCast( _center, new Vector2( 0.95f, 0.09f ), s_hideoutLayerMask ) ) {
-				return NavArrayCellData.HasHideout;
+				return NavArrayCellData.HideoutFlag;
 			}
 			return NavArrayCellData.Empty;
 		}
