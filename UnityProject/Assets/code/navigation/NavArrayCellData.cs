@@ -3,7 +3,7 @@ using System;
 
 namespace vzp {
 	[Flags]
-	public enum NavArrayCell : short {
+	public enum NavArrayCellData : short {
 		Empty = 0,
 		IsGround = 0b00000001,
 		IsCeiling = 0b00000010,

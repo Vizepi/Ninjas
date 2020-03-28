@@ -18,7 +18,7 @@ namespace vzp {
 		[SerializeField, Tooltip( "Size of a cell square" )]
 		int m_cellSquareSize = 10;
 
-		NavArrayCell[,][,] m_cells = null;
+		NavArrayCellData[,][,] m_cells = null;
 
 		//=============================================================================================
 		public RectInt Broadphase {
@@ -97,7 +97,7 @@ namespace vzp {
 							}
 
 							// Initialize NavArray							
-							m_cells = new NavArrayCell[ broadphase.width, broadphase.height ][,];
+							m_cells = new NavArrayCellData[ broadphase.width, broadphase.height ][,];
 
 							// Get block bits
 							int blockBitsByteCount = NeededBytesForSize( broadphase.width, broadphase.height );
@@ -113,14 +113,14 @@ namespace vzp {
 
 									if ( ( blockBits[ byteIndex ] & bitFlag ) != 0 ) {
 										byte[] block = reader.ReadBytes( blockSize );
-										m_cells[ x, y ] = new NavArrayCell[ cellSquareSize, cellSquareSize ];
+										m_cells[ x, y ] = new NavArrayCellData[ cellSquareSize, cellSquareSize ];
 
 										for ( int cy = 0; cy < cellSquareSize; ++cy ) {
 											int sy = cy * cellSquareSize;
 											for ( int cx = 0; cx < cellSquareSize; ++cx ) {
 												int sx = ( sy + cx ) * sizeof( short );
 
-												m_cells[ x, y ][ cx, cy ] = ( NavArrayCell )( ( block[ sx ] << 8 ) | ( block[ sx + 1 ] ) );
+												m_cells[ x, y ][ cx, cy ] = ( NavArrayCellData )( ( block[ sx ] << 8 ) | ( block[ sx + 1 ] ) );
 											}
 										}
 									}
