@@ -35,18 +35,25 @@ namespace vzp {
 		[SerializeField, Tooltip( "Range at which the enemy freezes before attacking (m)" )]
 		float m_attackRange = 20.0f;
 
+		[Header( "Physics" )]
+		[SerializeField, Tooltip( "Distance from the player's feet where we are considered grounded (unit)" )]
+		float m_groundDistance = 0.05f;
+		[SerializeField, Tooltip( "Collision layers used for gond detection" )]
+		LayerMask m_groundLayer = 0;
+
 		[Header( "Scoring" )]
 		[SerializeField, Tooltip( "Score obtained when killed" )]
 		int m_killScore = 100;
 
 		protected State m_currentState = State.Patrol;
-		protected bool m_isFacingLeft = true;
+		protected Rigidbody2D m_rigidbody = null;
+		RaycastHit2D[] m_groundHitChecker = new RaycastHit2D[ 1 ];
 
 		//=============================================================================================
-		public bool IsFacingLeft {
-			get { return m_isFacingLeft; }
-		}
+		public bool IsFacingLeft { get; protected set; }
+		public bool IsGrounded { get; private set; }
 
+		#region Virtuals
 		//=============================================================================================
 		protected virtual void OnPatrolUpdate() { }
 		protected virtual void OnPatrolLateUpdate() { }
@@ -89,33 +96,48 @@ namespace vzp {
 		protected virtual void OnSpawned() { }
 		protected virtual void OnKillingPlayer() { }
 		protected virtual void OnKilled() { }
+		#endregion
 
 		//=============================================================================================
 		public void OnUpdate() {
 			switch ( m_currentState ) {
 			case State.Patrol:
-				PatrolUpdate();
+				OnPatrolUpdate();
 				break;
 			case State.Detect:
+				OnDetectUpdate();
 				break;
 			case State.Chase:
+				OnChaseUpdate();
 				break;
 			case State.Attack:
+				OnAttackUpdate();
 				break;
 			}
+
+
+			IsGrounded = Physics2D.RaycastNonAlloc(
+				m_rigidbody.position,
+				Vector2.down,
+				m_groundHitChecker,
+				m_groundDistance,
+				m_groundLayer ) != 0;
 		}
 
 		//=============================================================================================
 		public void OnLateUpdate() {
 			switch ( m_currentState ) {
 			case State.Patrol:
-				PatrolLateUpdate();
+				OnPatrolLateUpdate();
 				break;
 			case State.Detect:
+				OnDetectLateUpdate();
 				break;
 			case State.Chase:
+				OnChaseLateUpdate();
 				break;
 			case State.Attack:
+				OnAttackLateUpdate();
 				break;
 			}
 		}
@@ -124,18 +146,31 @@ namespace vzp {
 		public void OnFixedUpdate() {
 			switch ( m_currentState ) {
 			case State.Patrol:
-				PatrolFixedUpdate();
+				OnPatrolFixedUpdate();
 				break;
 			case State.Detect:
+				OnDetectFixedUpdate();
 				break;
 			case State.Chase:
+				OnChaseFixedUpdate();
 				break;
 			case State.Attack:
+				OnAttackFixedUpdate();
 				break;
 			}
 		}
 
+		//=============================================================================================
+		protected NavArrayCell GetCurrentCell() {
+			NavArrayCell? currentCell = Game.EnemyManager.NavArray.GetCell( transform.position );
+			Debug.Assert( currentCell.HasValue, "[ENEMY] Enemy is outside the NavArray broadphase." );
+			return currentCell.Value;
+		}
+
 #if UNITY_EDITOR
+		//=============================================================================================
+		protected virtual void OnDrawGizmosCustom( bool _selected ) { }
+
 		//=============================================================================================
 		void OnDrawGizmosCommon() {
 		}
@@ -146,12 +181,14 @@ namespace vzp {
 			color.a = 0.25f;
 			Gizmos.color = color;
 			OnDrawGizmosCommon();
+			OnDrawGizmosCustom( false );
 		}
 
 		//=============================================================================================
 		void OnDrawGizmosSelected() {
 			Gizmos.color = Color.magenta;
 			OnDrawGizmosCommon();
+			OnDrawGizmosCustom( true );
 		}
 #endif // UNITY_EDITOR
 	}
