@@ -7,20 +7,6 @@ using UnityEngine.SceneManagement;
 namespace vzp {
 	public class NavArray : MonoBehaviour {
 		//=============================================================================================
-		[Flags]
-		public enum Cell {
-			Empty			= 0,
-			IsGround		= 0b00000001,
-			IsCeiling		= 0b00000010,
-			HasLeftWall		= 0b00000100,
-			HasRightWall	= 0b00001000,
-			HasLadder		= 0b00010000,
-			HasHideout		= 0b00100000,
-			IsGroundThin	= 0b01000000,
-			IsCeilingThin	= 0b10000000
-		}
-
-		//=============================================================================================
 		public const long kFileMask = 1684235984;
 		public const string kAssetPath = "generated/navigation/";
 		public const string kAssetExtension = ".nav";
@@ -32,7 +18,7 @@ namespace vzp {
 		[SerializeField, Tooltip( "Size of a cell square" )]
 		int m_cellSquareSize = 10;
 
-		Cell[,][,] m_cells = null;
+		NavArrayCell[,][,] m_cells = null;
 
 		//=============================================================================================
 		public RectInt Broadphase {
@@ -111,7 +97,7 @@ namespace vzp {
 							}
 
 							// Initialize NavArray							
-							m_cells = new Cell[ broadphase.width, broadphase.height ][,];
+							m_cells = new NavArrayCell[ broadphase.width, broadphase.height ][,];
 
 							// Get block bits
 							int blockBitsByteCount = NeededBytesForSize( broadphase.width, broadphase.height );
@@ -127,14 +113,14 @@ namespace vzp {
 
 									if ( ( blockBits[ byteIndex ] & bitFlag ) != 0 ) {
 										byte[] block = reader.ReadBytes( blockSize );
-										m_cells[ x, y ] = new Cell[ cellSquareSize, cellSquareSize ];
+										m_cells[ x, y ] = new NavArrayCell[ cellSquareSize, cellSquareSize ];
 
 										for ( int cy = 0; cy < cellSquareSize; ++cy ) {
 											int sy = cy * cellSquareSize;
 											for ( int cx = 0; cx < cellSquareSize; ++cx ) {
 												int sx = ( sy + cx ) * sizeof( short );
 
-												m_cells[ x, y ][ cx, cy ] = ( Cell )( ( block[ sx ] << 8 ) | ( block[ sx + 1 ] ) );
+												m_cells[ x, y ][ cx, cy ] = ( NavArrayCell )( ( block[ sx ] << 8 ) | ( block[ sx + 1 ] ) );
 											}
 										}
 									}

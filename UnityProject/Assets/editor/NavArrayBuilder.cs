@@ -17,8 +17,8 @@ namespace vzp {
 		static int s_ladderLayerMask = 0;
 		static int s_hideoutLayerMask = 0;
 
-		static Tuple<int, NavArray.Cell>[] s_groundLayerToCellMask = null;
-		static Tuple<int, NavArray.Cell>[] s_ceilingLayerToCellMask = null;
+		static Tuple<int, NavArrayCell>[] s_groundLayerToCellMask = null;
+		static Tuple<int, NavArrayCell>[] s_ceilingLayerToCellMask = null;
 
 		//=============================================================================================
 		static void Log( string _msg ) {
@@ -70,14 +70,14 @@ namespace vzp {
 			s_ladderLayerMask = LayerMask.GetMask( "Ladder" );
 			s_hideoutLayerMask = LayerMask.GetMask( "Hideout" );
 
-			s_groundLayerToCellMask = new Tuple<int, NavArray.Cell>[] {
-				new Tuple<int, NavArray.Cell>( s_groundLayerMask, NavArray.Cell.IsGround ),
-				new Tuple<int, NavArray.Cell>( s_thinGroundLayerMask, NavArray.Cell.IsGround | NavArray.Cell.IsGroundThin )
+			s_groundLayerToCellMask = new Tuple<int, NavArrayCell>[] {
+				new Tuple<int, NavArrayCell>( s_groundLayerMask, NavArrayCell.IsGround ),
+				new Tuple<int, NavArrayCell>( s_thinGroundLayerMask, NavArrayCell.IsGround | NavArrayCell.IsGroundThin )
 			};
 
-			s_ceilingLayerToCellMask = new Tuple<int, NavArray.Cell>[] {
-				new Tuple<int, NavArray.Cell>( s_groundLayerMask, NavArray.Cell.IsCeiling ),
-				new Tuple<int, NavArray.Cell>( s_thinGroundLayerMask, NavArray.Cell.IsCeiling | NavArray.Cell.IsCeilingThin )
+			s_ceilingLayerToCellMask = new Tuple<int, NavArrayCell>[] {
+				new Tuple<int, NavArrayCell>( s_groundLayerMask, NavArrayCell.IsCeiling ),
+				new Tuple<int, NavArrayCell>( s_thinGroundLayerMask, NavArrayCell.IsCeiling | NavArrayCell.IsCeilingThin )
 			};
 		}
 
@@ -108,7 +108,7 @@ namespace vzp {
 			Log( "Allocating memory (" + ( broadphase.width * broadphase.height ) + " entries, " + blockBitCount + " bit bytes)" );
 
 			// Allocate blocks
-			NavArray.Cell[,][,] cells = new NavArray.Cell[ broadphase.width, broadphase.height ][,];
+			NavArrayCell[,][,] cells = new NavArrayCell[ broadphase.width, broadphase.height ][,];
 
 			// Allocate bits
 			byte[] blockBits = new byte[ blockBitCount ];
@@ -141,7 +141,7 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		static void ComputeCells( NavArray _nav, NavArray.Cell[,][,] _cells, byte[] _blockBits ) {
+		static void ComputeCells( NavArray _nav, NavArrayCell[,][,] _cells, byte[] _blockBits ) {
 			int cellSquareSize = _nav.CellSquareSize;
 			RectInt broadphase = _nav.Broadphase;
 
@@ -150,16 +150,16 @@ namespace vzp {
 			// For each entry in the array
 			for ( int y = 0, bit = 0; y < broadphase.height; ++y ) {
 				for ( int x = 0; x < broadphase.width; ++x, ++bit ) {
-					_cells[ x, y ] = new NavArray.Cell[ cellSquareSize, cellSquareSize ];
+					_cells[ x, y ] = new NavArrayCell[ cellSquareSize, cellSquareSize ];
 
 					// Compute each cell
 					bool hasNonEmpty = false;
 					for ( int cy = 0; cy < cellSquareSize; ++cy ) {
 						for ( int cx = 0; cx < cellSquareSize; ++cx ) {
 							Vector2 cellCenter = new Vector2( ( x + broadphase.xMin ) * cellSquareSize + cx + 0.5f, ( y + broadphase.yMin ) * cellSquareSize + cy + 0.5f );
-							NavArray.Cell cell = CastCell( cellCenter );
+							NavArrayCell cell = CastCell( cellCenter );
 							_cells[ x, y ][ cx, cy ] = cell;
-							hasNonEmpty |= ( cell != NavArray.Cell.Empty );
+							hasNonEmpty |= ( cell != NavArrayCell.Empty );
 						}
 					}
 
@@ -174,8 +174,8 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		static NavArray.Cell CastCell( Vector2 _center ) {
-			NavArray.Cell cell = NavArray.Cell.Empty;
+		static NavArrayCell CastCell( Vector2 _center ) {
+			NavArrayCell cell = NavArrayCell.Empty;
 
 			cell |= CastGround( _center );
 			cell |= CastCeiling( _center );
@@ -188,7 +188,7 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		static NavArray.Cell GenericBoxCast( Vector2 _position, Vector2 _size, int _layerMask, Tuple<int, NavArray.Cell>[] _layerToCellMask ) {
+		static NavArrayCell GenericBoxCast( Vector2 _position, Vector2 _size, int _layerMask, Tuple<int, NavArrayCell>[] _layerToCellMask ) {
 			int castCount = Physics2D.OverlapBoxNonAlloc( _position, _size, 0.0f, s_hits, _layerMask );
 
 			if ( castCount > s_hits.Length ) {
@@ -196,12 +196,12 @@ namespace vzp {
 				castCount = s_hits.Length;
 			}
 
-			NavArray.Cell mask = NavArray.Cell.Empty;
+			NavArrayCell mask = NavArrayCell.Empty;
 
 			for ( int i = 0; i < castCount; ++i ) {
 				int objectLayerMask = 1 << s_hits[ i ].gameObject.layer;
 
-				foreach ( Tuple<int, NavArray.Cell> layerToCellMaks in _layerToCellMask ) {
+				foreach ( Tuple<int, NavArrayCell> layerToCellMaks in _layerToCellMask ) {
 					if ( ( objectLayerMask & layerToCellMaks.Item1 ) != 0 ) {
 						mask |= layerToCellMaks.Item2;
 					}
@@ -224,7 +224,7 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		static NavArray.Cell CastGround( Vector2 _center ) {
+		static NavArrayCell CastGround( Vector2 _center ) {
 			int layerMask = s_groundLayerMask | s_thinGroundLayerMask;
 
 			// Cast ground and thin ground
@@ -236,7 +236,7 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		static NavArray.Cell CastCeiling( Vector2 _center ) {
+		static NavArrayCell CastCeiling( Vector2 _center ) {
 			int layerMask = s_groundLayerMask | s_thinGroundLayerMask;
 
 			// Cast ceiling and thin ceiling
@@ -248,35 +248,35 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		static NavArray.Cell CastWall( Vector2 _center, bool _left ) {
+		static NavArrayCell CastWall( Vector2 _center, bool _left ) {
 			Vector2 position = _center + ( _left ? Vector2.left : Vector2.right ) * 0.5f;
 
 			// Cast wall
 			if ( GenericBoxCast( position, new Vector2( 0.95f, 0.95f ), s_wallLayerMask ) ) {
-				return _left ? NavArray.Cell.HasLeftWall : NavArray.Cell.HasRightWall;
+				return _left ? NavArrayCell.HasLeftWall : NavArrayCell.HasRightWall;
 			}
 
-			return NavArray.Cell.Empty;
+			return NavArrayCell.Empty;
 		}
 
 		//=============================================================================================
-		static NavArray.Cell CastLadder( Vector2 _center ) {
+		static NavArrayCell CastLadder( Vector2 _center ) {
 			if ( GenericBoxCast( _center, new Vector2( 0.95f, 0.09f ), s_ladderLayerMask ) ) {
-				return NavArray.Cell.HasLadder;
+				return NavArrayCell.HasLadder;
 			}
-			return NavArray.Cell.Empty;
+			return NavArrayCell.Empty;
 		}
 
 		//=============================================================================================
-		static NavArray.Cell CastHideout( Vector2 _center ) {
+		static NavArrayCell CastHideout( Vector2 _center ) {
 			if ( GenericBoxCast( _center, new Vector2( 0.95f, 0.09f ), s_hideoutLayerMask ) ) {
-				return NavArray.Cell.HasHideout;
+				return NavArrayCell.HasHideout;
 			}
-			return NavArray.Cell.Empty;
+			return NavArrayCell.Empty;
 		}
 
 		//=============================================================================================
-		static void WriteBlocks( NavArray _nav, NavArray.Cell[,][,] _cells, byte[] _blockBits, BinaryWriter _writer ) {
+		static void WriteBlocks( NavArray _nav, NavArrayCell[,][,] _cells, byte[] _blockBits, BinaryWriter _writer ) {
 			int cellSquareSize = _nav.CellSquareSize;
 			RectInt broadphase = _nav.Broadphase;
 			int numBlocks = broadphase.width * broadphase.height;
@@ -290,14 +290,14 @@ namespace vzp {
 					byte bitFlag = NavArray.BitIndexInBlockBitForBitIndex( bit );
 
 					if ( ( _blockBits[ byteIndex ] & bitFlag ) != 0 ) {
-						NavArray.Cell[,] array = _cells[ x, y ];
+						NavArrayCell[,] array = _cells[ x, y ];
 						byte[] block = new byte[ blockSize ];
 
 						for ( int cy = 0; cy < cellSquareSize; ++cy ) {
 							int sy = cy * cellSquareSize;
 							for ( int cx = 0; cx < cellSquareSize; ++cx ) {
 								int sx = ( sy + cx ) * sizeof( short );
-								NavArray.Cell cell = array[ cx, cy ];
+								NavArrayCell cell = array[ cx, cy ];
 
 								block[ sx ] = ( byte )( ( int )cell >> 8 );
 								block[ sx + 1 ] = ( byte )( ( int )cell & 0xff );
