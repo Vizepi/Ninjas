@@ -53,7 +53,6 @@ namespace vzp {
 		//=============================================================================================
 		void Awake() {
 			string sceneName = ScenePathToNavPath( SceneManager.GetActiveScene().path );
-			Debug.Log( sceneName );
 			TextAsset asset = Resources.Load<TextAsset>( sceneName );
 
 			if ( asset == null ) {
