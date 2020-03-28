@@ -19,6 +19,7 @@ namespace vzp {
 		int m_cellSquareSize = 10;
 
 		NavArrayCellData[,][,] m_cells = null;
+		RectInt m_expandedBroadphase;
 
 		//=============================================================================================
 		public RectInt Broadphase {
@@ -38,6 +39,12 @@ namespace vzp {
 
 		//=============================================================================================
 		void Awake() {
+			m_expandedBroadphase = new RectInt(
+				m_broadphase.xMin * m_cellSquareSize,
+				m_broadphase.yMin * m_cellSquareSize,
+				m_broadphase.width * m_cellSquareSize,
+				m_broadphase.height * m_cellSquareSize );
+
 			string sceneName = ScenePathToNavPath( SceneManager.GetActiveScene().path );
 			TextAsset asset = Resources.Load<TextAsset>( sceneName );
 
@@ -138,6 +145,26 @@ namespace vzp {
 				return false;
 			}
 			return true;
+		}
+
+		//=============================================================================================
+		public NavArrayCellData? GetCellData( Vector2Int _position ) {
+			if ( _position.x < m_expandedBroadphase.xMin ||
+				_position.x >= m_expandedBroadphase.xMax ||
+				_position.y < m_expandedBroadphase.yMin ||
+				_position.y >= m_expandedBroadphase.yMax ) {
+				return null;
+			}
+
+			NavArrayCellData[,] cells = m_cells[ _position.x / m_cellSquareSize, _position.y / m_cellSquareSize ];
+
+			return cells == null ? NavArrayCellData.Empty : cells[ _position.x % m_cellSquareSize, _position.y % m_cellSquareSize ];
+		}
+
+		//=============================================================================================
+		public NavArrayCell? GetCell( Vector2Int _position ) {
+			NavArrayCellData? cellData = GetCellData( _position );
+			return cellData.HasValue ? new NavArrayCell( this, _position, cellData.Value ) : ( NavArrayCell? )null;
 		}
 
 #if UNITY_EDITOR
