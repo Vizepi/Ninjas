@@ -13,8 +13,12 @@ namespace vzp {
 
 		static int s_groundLayerMask = 0;
 		static int s_thinGroundLayerMask = 0;
+		static int s_wallLayerMask = 0;
+		static int s_ladderLayerMask = 0;
+		static int s_hideoutLayerMask = 0;
 
 		static Tuple<int, NavArray.Cell>[] s_groundLayerToCellMask = null;
+		static Tuple<int, NavArray.Cell>[] s_ceilingLayerToCellMask = null;
 
 		//=============================================================================================
 		static void Log( string _msg ) {
@@ -62,10 +66,18 @@ namespace vzp {
 
 			s_groundLayerMask = LayerMask.GetMask( "Ground" );
 			s_thinGroundLayerMask = LayerMask.GetMask( "ThinGround" );
+			s_wallLayerMask = LayerMask.GetMask( "Wall" );
+			s_ladderLayerMask = LayerMask.GetMask( "Ladder" );
+			s_hideoutLayerMask = LayerMask.GetMask( "Hideout" );
 
 			s_groundLayerToCellMask = new Tuple<int, NavArray.Cell>[] {
 				new Tuple<int, NavArray.Cell>( s_groundLayerMask, NavArray.Cell.IsGround ),
 				new Tuple<int, NavArray.Cell>( s_thinGroundLayerMask, NavArray.Cell.IsGround | NavArray.Cell.IsGroundThin )
+			};
+
+			s_ceilingLayerToCellMask = new Tuple<int, NavArray.Cell>[] {
+				new Tuple<int, NavArray.Cell>( s_groundLayerMask, NavArray.Cell.IsCeiling ),
+				new Tuple<int, NavArray.Cell>( s_thinGroundLayerMask, NavArray.Cell.IsCeiling | NavArray.Cell.IsCeilingThin )
 			};
 		}
 
@@ -167,18 +179,16 @@ namespace vzp {
 
 			cell |= CastGround( _center );
 			cell |= CastCeiling( _center );
-
-			// Cast left wall
-			// Cast right wall
-			// Cast ladder
-			// Cast hideout
-
+			cell |= CastWall( _center, true );
+			cell |= CastWall( _center, false );
+			cell |= CastLadder( _center );
+			cell |= CastHideout( _center );
 
 			return cell;
 		}
 
 		//=============================================================================================
-		static int GenericBoxCast( Vector2 _position, Vector2 _size, int _layerMask ) {
+		static NavArray.Cell GenericBoxCast( Vector2 _position, Vector2 _size, int _layerMask, Tuple<int, NavArray.Cell>[] _layerToCellMask ) {
 			int castCount = Physics2D.OverlapBoxNonAlloc( _position, _size, 0.0f, s_hits, _layerMask );
 
 			if ( castCount > s_hits.Length ) {
@@ -186,14 +196,9 @@ namespace vzp {
 				castCount = s_hits.Length;
 			}
 
-			return castCount;
-		}
-
-		//=============================================================================================
-		static NavArray.Cell GenericDeduceMask( int _castCount, Tuple<int, NavArray.Cell>[] _layerToCellMask ) {
 			NavArray.Cell mask = NavArray.Cell.Empty;
 
-			for ( int i = 0; i < _castCount; ++i ) {
+			for ( int i = 0; i < castCount; ++i ) {
 				int objectLayerMask = 1 << s_hits[ i ].gameObject.layer;
 
 				foreach ( Tuple<int, NavArray.Cell> layerToCellMaks in _layerToCellMask ) {
@@ -207,12 +212,27 @@ namespace vzp {
 		}
 
 		//=============================================================================================
+		static bool GenericBoxCast( Vector2 _position, Vector2 _size, int _layerMask ) {
+			int castCount = Physics2D.OverlapBoxNonAlloc( _position, _size, 0.0f, s_hits, _layerMask );
+
+			if ( castCount > s_hits.Length ) {
+				Debug.LogWarning( "[NAVARRAY] Collider cast limit reached. Consider increasing the number of colliders that can be cast." );
+				castCount = s_hits.Length;
+			}
+
+			return castCount > 0;
+		}
+
+		//=============================================================================================
 		static NavArray.Cell CastGround( Vector2 _center ) {
 			int layerMask = s_groundLayerMask | s_thinGroundLayerMask;
 
 			// Cast ground and thin ground
-			int castCount = GenericBoxCast( _center + new Vector2( -0.475f, -0.595f ), new Vector2( 0.95f, 0.09f ), layerMask );
-			return GenericDeduceMask( castCount, s_groundLayerToCellMask );
+			return GenericBoxCast(
+				_center + new Vector2( -0.475f, -0.595f ),
+				new Vector2( 0.95f, 0.09f ),
+				layerMask,
+				s_groundLayerToCellMask );
 		}
 
 		//=============================================================================================
@@ -220,8 +240,39 @@ namespace vzp {
 			int layerMask = s_groundLayerMask | s_thinGroundLayerMask;
 
 			// Cast ceiling and thin ceiling
-			int castCount = GenericBoxCast( _center + new Vector2( -0.475f, 0.405f ), new Vector2( 0.95f, 0.09f ), layerMask );
-			return GenericDeduceMask( castCount, s_groundLayerToCellMask );
+			return GenericBoxCast(
+				_center + new Vector2( -0.475f, 0.405f ),
+				new Vector2( 0.95f, 0.09f ),
+				layerMask,
+				s_ceilingLayerToCellMask );
+		}
+
+		//=============================================================================================
+		static NavArray.Cell CastWall( Vector2 _center, bool _left ) {
+			Vector2 position = _center + ( _left ? Vector2.left : Vector2.right ) * 0.5f;
+
+			// Cast wall
+			if ( GenericBoxCast( position, new Vector2( 0.95f, 0.95f ), s_wallLayerMask ) ) {
+				return _left ? NavArray.Cell.HasLeftWall : NavArray.Cell.HasRightWall;
+			}
+
+			return NavArray.Cell.Empty;
+		}
+
+		//=============================================================================================
+		static NavArray.Cell CastLadder( Vector2 _center ) {
+			if ( GenericBoxCast( _center, new Vector2( 0.95f, 0.09f ), s_ladderLayerMask ) ) {
+				return NavArray.Cell.HasLadder;
+			}
+			return NavArray.Cell.Empty;
+		}
+
+		//=============================================================================================
+		static NavArray.Cell CastHideout( Vector2 _center ) {
+			if ( GenericBoxCast( _center, new Vector2( 0.95f, 0.09f ), s_hideoutLayerMask ) ) {
+				return NavArray.Cell.HasHideout;
+			}
+			return NavArray.Cell.Empty;
 		}
 
 		//=============================================================================================
