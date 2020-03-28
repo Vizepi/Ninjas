@@ -167,6 +167,13 @@ namespace vzp {
 			return cellData.HasValue ? new NavArrayCell( this, _position, cellData.Value ) : ( NavArrayCell? )null;
 		}
 
+		//=============================================================================================
+		public NavArrayCell? GetCell( Vector3 _worldPosition ) {
+			Vector2Int position = new Vector2Int( Mathf.FloorToInt( _worldPosition.x ), Mathf.FloorToInt( _worldPosition.y ) );
+			NavArrayCellData ? cellData = GetCellData( position );
+			return cellData.HasValue ? new NavArrayCell( this, position, cellData.Value ) : ( NavArrayCell? )null;
+		}
+
 #if UNITY_EDITOR
 		//=============================================================================================
 		void OnDrawGizmosCommon() {
