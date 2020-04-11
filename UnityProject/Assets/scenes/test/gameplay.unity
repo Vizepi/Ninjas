@@ -4005,6 +4005,7 @@ GameObject:
   m_Component:
   - component: {fileID: 668666270}
   - component: {fileID: 668666273}
+  - component: {fileID: 668666275}
   - component: {fileID: 668666272}
   - component: {fileID: 668666271}
   - component: {fileID: 668666274}
@@ -4128,8 +4129,6 @@ MonoBehaviour:
     m_leaveAnimation: 
     m_hidingTime: 0.1
     m_unhidingTime: 0
-  m_fullSpeedTime: 0.3
-  m_zeroSpeedTime: 0.15
   m_groundDistance: 0.05
   m_groundLayer:
     serializedVersion: 2
@@ -4160,6 +4159,20 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &668666275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668666269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdb950dce5742044bbada3af59bc6d25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fullSpeedTime: 0.3
+  m_zeroSpeedTime: 0.15
 --- !u!1 &678912129
 GameObject:
   m_ObjectHideFlags: 0
@@ -4545,7 +4558,13 @@ MonoBehaviour:
   m_postAttackDelay: 0.5
   m_attackDamage: 0.5
   m_attackRange: 20
+  m_groundDistance: 0.05
+  m_groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
   m_killScore: 100
+  m_stopTimeOnPlatformEdge: 1
+  m_stopDistanceFromPlatformEdge: 0.2
 --- !u!4 &718401835
 Transform:
   m_ObjectHideFlags: 0
@@ -5487,11 +5506,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_broadphase:
-    x: -3
+    x: -5
     y: 0
-    width: 6
-    height: 4
-  m_cellSquareSize: 5
+    width: 10
+    height: 7
+  m_cellSquareSize: 3
+  m_debugShowNavArray: 1
+  m_debugTextureAlpha: 0.706
 --- !u!1001 &903025239
 PrefabInstance:
   m_ObjectHideFlags: 0

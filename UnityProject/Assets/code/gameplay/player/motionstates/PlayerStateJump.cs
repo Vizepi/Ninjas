@@ -110,7 +110,7 @@ namespace vzp {
 				motion -= Game.InputManager[ InputManager.ActionName.Left ].state.state.isPressed ? 1.0f : 0.0f;
 				motion += Game.InputManager[ InputManager.ActionName.Right ].state.state.isPressed ? 1.0f : 0.0f;
 
-				Game.Player.SetHorizontalMotion( m_jumpAirSpeed, motion );
+				Game.Player.m_motionController.SetHorizontalMotion( m_jumpAirSpeed, motion );
 
 				m_afterJumpTimer -= Time.deltaTime;
 				if ( m_afterJumpTimer <= 0.0f ) {

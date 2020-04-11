@@ -96,12 +96,6 @@ namespace vzp {
 		[SerializeField, Tooltip( "Hide state" )]
 		StateHide m_stateHide = null;
 
-		[Header( "Motion" )]
-		[SerializeField, Tooltip( "Time to reach full speed (sec)" )]
-		float m_fullSpeedTime = 0.3f;
-		[SerializeField, Tooltip( "Time to reach zero speed (sec)" )]
-		float m_zeroSpeedTime = 0.15f;
-
 		[Header( "Physics" )]
 		[SerializeField, Tooltip( "Distance from the player's feet where we are considered grounded (unit)" )]
 		float m_groundDistance = 0.05f;
@@ -120,9 +114,8 @@ namespace vzp {
 		Animator m_animator = null;
 		Rigidbody2D m_rigidbody = null;
 		CapsuleCollider2D m_capsule = null;
+		CharacterMotionController m_motionController = null;
 		RaycastHit2D[] m_groundHitChecker = new RaycastHit2D[ 1 ];
-		float m_horizontalMotion = 0.0f;
-		float m_horizontalMotionDirection = 0.0f;
 
 		//=============================================================================================
 		public MotionState CurrentMotionState {
@@ -146,6 +139,10 @@ namespace vzp {
 			Debug.Assert( m_rigidbody );
 			m_capsule = GetComponent<CapsuleCollider2D>();
 			Debug.Assert( m_capsule );
+			m_motionController = GetComponent<CharacterMotionController>();
+			Debug.Assert( m_motionController );
+
+			m_motionController.Rigidbody = m_rigidbody;
 
 			m_motionStates[ ( int )MotionState.Idle ] = m_stateIdle;
 			m_motionStates[ ( int )MotionState.Run ] = m_stateRun;
@@ -189,7 +186,7 @@ namespace vzp {
 			m_motionStates[ ( int )m_currentMotionState ]?.Update();
 			m_actionStates[ ( int )m_currentActionState ]?.Update();
 
-			ApplyMotion();
+			m_motionController.ApplyMotion();
 			IsGrounded = Physics2D.RaycastNonAlloc(
 				m_rigidbody.position,
 				Vector2.down,
@@ -314,42 +311,6 @@ namespace vzp {
 		//=============================================================================================
 		public StateAction GetActionState( ActionState _state ) {
 			return m_actionStates[ ( int )_state ];
-		}
-
-		//=============================================================================================
-		public void SetHorizontalMotion( float _motion, float _direction ) {
-			m_horizontalMotion = _motion;
-			m_horizontalMotionDirection = _direction;
-		}
-
-		//=============================================================================================
-		void ApplyMotion() {
-			float currentXMotion = m_rigidbody.velocity.x;
-			float currentXMotionSign = Mathf.Sign( currentXMotion );
-			if ( m_horizontalMotionDirection == 0.0f ) {
-				// Reduce speed by deceleration factor
-				float speedScaleFactor = m_horizontalMotion * Time.deltaTime / m_zeroSpeedTime;
-
-				if ( Mathf.Abs( currentXMotion ) < speedScaleFactor ) {
-					currentXMotion = 0.0f;
-				} else {
-					currentXMotion -= currentXMotionSign * speedScaleFactor;
-				}
-
-				m_rigidbody.velocity = new Vector2( currentXMotion, m_rigidbody.velocity.y );
-
-			} else {
-				if ( currentXMotion != 0.0f && m_horizontalMotionDirection != currentXMotionSign ) {
-					float speedScaleFactor = m_horizontalMotion * Time.deltaTime / m_zeroSpeedTime;
-					currentXMotion -= currentXMotionSign * speedScaleFactor;
-				}
-				float accelerationFactor = m_horizontalMotion * Time.deltaTime / m_fullSpeedTime;
-				currentXMotion += m_horizontalMotionDirection * accelerationFactor;
-				currentXMotion = Mathf.Clamp( currentXMotion, -m_horizontalMotion, m_horizontalMotion );
-
-				m_rigidbody.velocity = new Vector2( currentXMotion, m_rigidbody.velocity.y );
-			}
-			m_horizontalMotionDirection = 0.0f;
 		}
 	}
 }

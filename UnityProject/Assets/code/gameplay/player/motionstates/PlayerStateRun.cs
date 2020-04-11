@@ -62,7 +62,7 @@ namespace vzp {
 				motion -= Game.InputManager[ InputManager.ActionName.Left ].state.state.isPressed ? 1.0f : 0.0f;
 				motion += Game.InputManager[ InputManager.ActionName.Right ].state.state.isPressed ? 1.0f : 0.0f;
 
-				Game.Player.SetHorizontalMotion( m_runningSpeed, motion );
+				Game.Player.m_motionController.SetHorizontalMotion( m_runningSpeed, motion );
 
 				if ( motion == 0.0f ) {
 					if ( Mathf.Approximately( Game.Player.m_rigidbody.velocity.x, 0.0f ) ) {
