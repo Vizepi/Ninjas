@@ -19,12 +19,14 @@ namespace vzp {
 		int m_cellSquareSize = 10;
 
 		NavArrayCellData[,][,] m_cells = null;
-		RectInt m_expandedBroadphase;
 
 		//=============================================================================================
 		public RectInt Broadphase {
 			get { return m_broadphase; }
 		}
+
+		//=============================================================================================
+		public RectInt ExpandedBroadphase { get; private set; }
 
 		//=============================================================================================
 		public int CellSquareSize {
@@ -39,7 +41,7 @@ namespace vzp {
 
 		//=============================================================================================
 		void Awake() {
-			m_expandedBroadphase = new RectInt(
+			ExpandedBroadphase = new RectInt(
 				m_broadphase.xMin * m_cellSquareSize,
 				m_broadphase.yMin * m_cellSquareSize,
 				m_broadphase.width * m_cellSquareSize,
@@ -149,10 +151,10 @@ namespace vzp {
 
 		//=============================================================================================
 		public NavArrayCellData? GetCellData( Vector2Int _position ) {
-			if ( _position.x < m_expandedBroadphase.xMin ||
-				_position.x >= m_expandedBroadphase.xMax ||
-				_position.y < m_expandedBroadphase.yMin ||
-				_position.y >= m_expandedBroadphase.yMax ) {
+			if ( _position.x < ExpandedBroadphase.xMin ||
+				_position.x >= ExpandedBroadphase.xMax ||
+				_position.y < ExpandedBroadphase.yMin ||
+				_position.y >= ExpandedBroadphase.yMax ) {
 				return null;
 			}
 
@@ -162,16 +164,24 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		public NavArrayCell? GetCell( Vector2Int _position ) {
+		public NavArrayCell GetCell( Vector2Int _position ) {
 			NavArrayCellData? cellData = GetCellData( _position );
-			return cellData.HasValue ? new NavArrayCell( this, _position, cellData.Value ) : ( NavArrayCell? )null;
+			if ( cellData.HasValue ) {
+				return new NavArrayCell( this, _position, cellData.Value, true );
+			} else {
+				return new NavArrayCell( this, _position, NavArrayCellData.Empty, false );
+			}
 		}
 
 		//=============================================================================================
-		public NavArrayCell? GetCell( Vector3 _worldPosition ) {
+		public NavArrayCell GetCell( Vector3 _worldPosition ) {
 			Vector2Int position = new Vector2Int( Mathf.FloorToInt( _worldPosition.x ), Mathf.FloorToInt( _worldPosition.y ) );
 			NavArrayCellData ? cellData = GetCellData( position );
-			return cellData.HasValue ? new NavArrayCell( this, position, cellData.Value ) : ( NavArrayCell? )null;
+			if ( cellData.HasValue ) {
+				return new NavArrayCell( this, position, cellData.Value, true );
+			} else {
+				return new NavArrayCell( this, position, NavArrayCellData.Empty, false );
+			}
 		}
 
 #if UNITY_EDITOR

@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace vzp {
 	public class NavArrayBuilder : MonoBehaviour {
+		//=============================================================================================
 		public const short kVersion = 1;
 
 		static Collider2D[] s_hits = null;
