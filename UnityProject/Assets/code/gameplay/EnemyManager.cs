@@ -4,6 +4,10 @@ using UnityEngine;
 namespace vzp {
 	public class EnemyManager : GameSystemManager {
 		//=============================================================================================
+		[SerializeField, Tooltip( "All the archetypes supported by the manager" )]
+		EnemyArchetypeDescriptor[] m_enemyArchetypes = null;
+
+		//=============================================================================================
 		public const int kMaxEnemies = 100;
 
 		//=============================================================================================
@@ -11,6 +15,7 @@ namespace vzp {
 
 		//=============================================================================================
 		Enemy[] m_enemies = new Enemy[ kMaxEnemies ];
+		EnemySpawn[] m_spawns = null;
 		int m_enemyCount = 0;
 
 		//=============================================================================================
@@ -18,6 +23,8 @@ namespace vzp {
 			NavArray[] navs = FindObjectsOfType<NavArray>();
 			Debug.Assert( navs.Length == 1 );
 			NavArray = navs[ 0 ];
+
+			m_spawns = FindObjectsOfType<EnemySpawn>();
 		}
 
 		//=============================================================================================
