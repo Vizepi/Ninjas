@@ -3,13 +3,6 @@ using UnityEngine;
 
 namespace vzp {
 	public abstract partial class Enemy : MonoBehaviour {
-		public enum State {
-			Patrol,
-			Detect,
-			Chase,
-			Attack
-		}
-
 		//=============================================================================================
 		[Header( "Movement" )]
 		[SerializeField, Tooltip( "The speed of the enemy when patroling (m/s)" )]
@@ -45,7 +38,9 @@ namespace vzp {
 		[SerializeField, Tooltip( "Score obtained when killed" )]
 		int m_killScore = 100;
 
-		protected State m_currentState = State.Patrol;
+		protected EnemyState m_currentState = EnemyState.Patrol;
+		protected EnemyPatrolState m_currentPatrolState = EnemyPatrolState.Walking;
+
 		protected Rigidbody2D m_rigidbody = null;
 		RaycastHit2D[] m_groundHitChecker = new RaycastHit2D[ 1 ];
 
@@ -101,20 +96,19 @@ namespace vzp {
 		//=============================================================================================
 		public void OnUpdate() {
 			switch ( m_currentState ) {
-			case State.Patrol:
+			case EnemyState.Patrol:
 				OnPatrolUpdate();
 				break;
-			case State.Detect:
+			case EnemyState.Detect:
 				OnDetectUpdate();
 				break;
-			case State.Chase:
+			case EnemyState.Chase:
 				OnChaseUpdate();
 				break;
-			case State.Attack:
+			case EnemyState.Attack:
 				OnAttackUpdate();
 				break;
 			}
-
 
 			IsGrounded = Physics2D.RaycastNonAlloc(
 				m_rigidbody.position,
@@ -127,16 +121,16 @@ namespace vzp {
 		//=============================================================================================
 		public void OnLateUpdate() {
 			switch ( m_currentState ) {
-			case State.Patrol:
+			case EnemyState.Patrol:
 				OnPatrolLateUpdate();
 				break;
-			case State.Detect:
+			case EnemyState.Detect:
 				OnDetectLateUpdate();
 				break;
-			case State.Chase:
+			case EnemyState.Chase:
 				OnChaseLateUpdate();
 				break;
-			case State.Attack:
+			case EnemyState.Attack:
 				OnAttackLateUpdate();
 				break;
 			}
@@ -145,16 +139,16 @@ namespace vzp {
 		//=============================================================================================
 		public void OnFixedUpdate() {
 			switch ( m_currentState ) {
-			case State.Patrol:
+			case EnemyState.Patrol:
 				OnPatrolFixedUpdate();
 				break;
-			case State.Detect:
+			case EnemyState.Detect:
 				OnDetectFixedUpdate();
 				break;
-			case State.Chase:
+			case EnemyState.Chase:
 				OnChaseFixedUpdate();
 				break;
-			case State.Attack:
+			case EnemyState.Attack:
 				OnAttackFixedUpdate();
 				break;
 			}
