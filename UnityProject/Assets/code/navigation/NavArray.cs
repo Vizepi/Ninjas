@@ -74,7 +74,7 @@ namespace vzp {
 		}
 
 		//=============================================================================================
-		bool LoadFile( byte[] _content ) {
+		bool LoadFile( byte[] _content, bool _logError = true ) {
 			try {
 				using ( MemoryStream memory = new MemoryStream( _content ) ) {
 					using ( MaskedStream masked = new MaskedStream( memory, kFileMask ) ) {
@@ -95,14 +95,14 @@ namespace vzp {
 
 							// Get broadphase
 							RectInt broadphase = new RectInt();
-							broadphase.xMin = reader.ReadByte();
-							broadphase.yMin = reader.ReadByte();
-							broadphase.xMax = reader.ReadByte();
-							broadphase.yMax = reader.ReadByte();
+							broadphase.xMin = reader.ReadInt16();
+							broadphase.yMin = reader.ReadInt16();
+							broadphase.xMax = reader.ReadInt16();
+							broadphase.yMax = reader.ReadInt16();
 
 							// Ensure broadphases match
-							if ( broadphase.min != m_broadphase.min || broadphase.max != broadphase.max ) {
-								throw new Exception( "Broadphase does not match the broadphase built in NavArray" );
+							if ( broadphase.min != m_broadphase.min || broadphase.max != m_broadphase.max ) {
+								throw new Exception( "Broadphase does not match the broadphase built in NavArray - Component: " + m_broadphase.ToString() + ", File: " + broadphase.ToString() );
 							}
 
 							// Initialize NavArray							
@@ -139,11 +139,13 @@ namespace vzp {
 					}
 				}
 			} catch ( Exception _e ) {
+				if ( _logError ) {
 #if UNITY_EDITOR
-				Debug.LogError( "[NAVARRAY] Failed to read NavArray asset: " + _e.Message + "\n" + _e.StackTrace );
+					Debug.LogError( "[NAVARRAY] Failed to read NavArray asset: " + _e.Message + "\n" + _e.StackTrace );
 #else
 				Debug.LogError( "[NAVARRAY] Failed to read NavArray asset: " + _e.Message );
 #endif
+				}
 				return false;
 			}
 			return true;
@@ -186,6 +188,18 @@ namespace vzp {
 
 #if UNITY_EDITOR
 		//=============================================================================================
+		[Header( "Debug" )]
+		[SerializeField, Tooltip( "Show NavArray representation" )]
+		bool m_debugShowNavArray = false;
+		[SerializeField, Tooltip( "Transparency of the NavArray texture" ), Range( 0.0f, 1.0f )]
+		float m_debugTextureAlpha = 0.5f;
+
+		Texture2D m_debugTexture = null;
+		int m_debugTextureIsBuilt = 0;
+
+		public bool RefreshTexture { private get; set; }
+
+		//=============================================================================================
 		void OnDrawGizmosCommon() {
 			// Broadphase
 			Vector3 p1 = new Vector3( m_broadphase.xMin * m_cellSquareSize, m_broadphase.yMin * m_cellSquareSize, 0.0f );
@@ -210,6 +224,127 @@ namespace vzp {
 		void OnDrawGizmosSelected() {
 			Gizmos.color = Color.red;
 			OnDrawGizmosCommon();
+			--m_debugTextureIsBuilt;
+
+			if ( m_debugShowNavArray ) {
+				int w = m_broadphase.width * m_cellSquareSize;
+				int h = m_broadphase.height * m_cellSquareSize;
+
+				if ( m_debugTextureIsBuilt <= 0 || RefreshTexture || !Mathf.Approximately( m_debugTexture.GetPixel( 0, 0 ).a, m_debugTextureAlpha ) ) {
+					RefreshTexture = false;
+
+					NavArrayCellData[,][,] cellsBackup = m_cells;
+
+					try {
+						string sceneName = ScenePathToNavPath( SceneManager.GetActiveScene().path );
+						TextAsset asset = Resources.Load<TextAsset>( sceneName );
+						LoadFile( asset.bytes, false );
+
+						m_debugTexture = new Texture2D( w * 5, h * 5, TextureFormat.ARGB32, false );
+						m_debugTexture.filterMode = FilterMode.Point;
+						m_debugTextureIsBuilt = 1000;
+
+						Color[] redBlock = new Color[ 25 ];
+						Color[] emptyBlock = new Color[ 25 ];
+						for ( int i = 0; i < 25; ++i ) {
+							redBlock[ i ] = new Color( 1.0f, 0.0f, 0.0f, m_debugTextureAlpha / 2.0f );
+							emptyBlock[ i ] = new Color( 0.0f, 0.0f, 0.0f, 0.0f );
+						}
+
+						for ( int j = 0; j < h; ++j ) {
+							int aj = j / CellSquareSize;
+							int bj = j % CellSquareSize;
+							for ( int i = 0; i < w; ++i ) {
+								int ai = i / CellSquareSize;
+								NavArrayCellData[,] dataArray = m_cells[ ai, aj ];
+								if ( dataArray == null ) {
+									m_debugTexture.SetPixels( i * 5, j * 5, 5, 5, redBlock );
+								} else {
+									int bi = i % CellSquareSize;
+									NavArrayCellData data = dataArray[ bi, bj ];
+									m_debugTexture.SetPixels( i * 5, j * 5, 5, 5, emptyBlock );
+									if ( data.HasLadder() ) {
+										Color c = new Color( 163 / 255.0f, 73 / 255.0f, 164 / 255.0f, m_debugTextureAlpha );
+										m_debugTexture.SetPixel( i * 5 + 2, j * 5 + 0, c );
+										m_debugTexture.SetPixel( i * 5 + 2, j * 5 + 1, c );
+										m_debugTexture.SetPixel( i * 5 + 2, j * 5 + 2, c );
+										m_debugTexture.SetPixel( i * 5 + 2, j * 5 + 3, c );
+										m_debugTexture.SetPixel( i * 5 + 2, j * 5 + 4, c );
+									}
+									if ( data.HasHideout() ) {
+										Color c = new Color( 255 / 255.0f, 174 / 255.0f, 201 / 255.0f, m_debugTextureAlpha );
+										m_debugTexture.SetPixel( i * 5 + 1, j * 5 + 0, c );
+										m_debugTexture.SetPixel( i * 5 + 1, j * 5 + 1, c );
+										m_debugTexture.SetPixel( i * 5 + 1, j * 5 + 2, c );
+										m_debugTexture.SetPixel( i * 5 + 1, j * 5 + 3, c );
+										m_debugTexture.SetPixel( i * 5 + 1, j * 5 + 4, c );
+
+										m_debugTexture.SetPixel( i * 5 + 3, j * 5 + 0, c );
+										m_debugTexture.SetPixel( i * 5 + 3, j * 5 + 1, c );
+										m_debugTexture.SetPixel( i * 5 + 3, j * 5 + 2, c );
+										m_debugTexture.SetPixel( i * 5 + 3, j * 5 + 3, c );
+										m_debugTexture.SetPixel( i * 5 + 3, j * 5 + 4, c );
+									}
+									if ( data.HasLeftWall() ) {
+										Color c = new Color( 255 / 255.0f, 127 / 255.0f, 39 / 255.0f, m_debugTextureAlpha );
+										m_debugTexture.SetPixel( i * 5, j * 5 + 0, c );
+										m_debugTexture.SetPixel( i * 5, j * 5 + 1, c );
+										m_debugTexture.SetPixel( i * 5, j * 5 + 2, c );
+										m_debugTexture.SetPixel( i * 5, j * 5 + 3, c );
+										m_debugTexture.SetPixel( i * 5, j * 5 + 4, c );
+									}
+									if ( data.HasRightWall() ) {
+										Color c = new Color( 255 / 255.0f, 127 / 255.0f, 39 / 255.0f, m_debugTextureAlpha );
+										m_debugTexture.SetPixel( i * 5 + 4, j * 5 + 0, c );
+										m_debugTexture.SetPixel( i * 5 + 4, j * 5 + 1, c );
+										m_debugTexture.SetPixel( i * 5 + 4, j * 5 + 2, c );
+										m_debugTexture.SetPixel( i * 5 + 4, j * 5 + 3, c );
+										m_debugTexture.SetPixel( i * 5 + 4, j * 5 + 4, c );
+									}
+									if ( data.HasCeiling() ) {
+										Color c = new Color( 34 / 255.0f, 177 / 255.0f, 76 / 255.0f, m_debugTextureAlpha );
+										m_debugTexture.SetPixel( i * 5 + 0, j * 5 + 4, c );
+										m_debugTexture.SetPixel( i * 5 + 1, j * 5 + 4, c );
+										m_debugTexture.SetPixel( i * 5 + 2, j * 5 + 4, c );
+										m_debugTexture.SetPixel( i * 5 + 3, j * 5 + 4, c );
+										m_debugTexture.SetPixel( i * 5 + 4, j * 5 + 4, c );
+									}
+									if ( data.HasThinCeiling() ) {
+										Color c = new Color( 181 / 255.0f, 230 / 255.0f, 29 / 255.0f, m_debugTextureAlpha );
+										m_debugTexture.SetPixel( i * 5 + 1, j * 5 + 4, c );
+										m_debugTexture.SetPixel( i * 5 + 2, j * 5 + 4, c );
+										m_debugTexture.SetPixel( i * 5 + 3, j * 5 + 4, c );
+									}
+									if ( data.HasGround() ) {
+										Color c = new Color( 0 / 255.0f, 162 / 255.0f, 232 / 255.0f, m_debugTextureAlpha );
+										m_debugTexture.SetPixel( i * 5 + 0, j * 5, c );
+										m_debugTexture.SetPixel( i * 5 + 1, j * 5, c );
+										m_debugTexture.SetPixel( i * 5 + 2, j * 5, c );
+										m_debugTexture.SetPixel( i * 5 + 3, j * 5, c );
+										m_debugTexture.SetPixel( i * 5 + 4, j * 5, c );
+									}
+									if ( data.HasThinGround() ) {
+										Color c = new Color( 153 / 255.0f, 217 / 255.0f, 234 / 255.0f, m_debugTextureAlpha );
+										m_debugTexture.SetPixel( i * 5 + 1, j * 5, c );
+										m_debugTexture.SetPixel( i * 5 + 2, j * 5, c );
+										m_debugTexture.SetPixel( i * 5 + 3, j * 5, c );
+									}
+								}
+							}
+						}
+						m_debugTexture.Apply();
+					} catch( Exception _e ) {}
+
+					m_cells = cellsBackup;
+				}
+
+				if ( m_debugTextureIsBuilt > 0 ) {
+					int x = m_broadphase.xMin * m_cellSquareSize;
+					int y = m_broadphase.yMin * m_cellSquareSize;
+
+					Gizmos.DrawGUITexture( new Rect( x, y + h, w, -h ), m_debugTexture );
+				}
+			}
 		}
 #endif // UNITY_EDITOR
 	}

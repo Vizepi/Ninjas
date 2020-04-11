@@ -59,6 +59,9 @@ namespace vzp {
 						}
 					}
 				}
+#if UNITY_EDITOR
+				nav.RefreshTexture = true;
+#endif
 			} catch ( Exception _e ) {
 				EmitLog();
 				Debug.LogError( "[NAVARRAY] Failed to build navigation: " + _e.Message + "\n" + _e.StackTrace );
@@ -148,10 +151,11 @@ namespace vzp {
 
 			// Broadphase
 			RectInt broadphase = _nav.Broadphase;
-			_writer.Write( ( byte )broadphase.xMin );
-			_writer.Write( ( byte )broadphase.yMin );
-			_writer.Write( ( byte )broadphase.xMax );
-			_writer.Write( ( byte )broadphase.yMax );
+			Log( "Broadphase: " + broadphase.ToString() );
+			_writer.Write( ( short )broadphase.xMin );
+			_writer.Write( ( short )broadphase.yMin );
+			_writer.Write( ( short )broadphase.xMax );
+			_writer.Write( ( short )broadphase.yMax );
 		}
 
 		//=============================================================================================
@@ -243,7 +247,7 @@ namespace vzp {
 
 			// Cast ground and thin ground
 			return GenericBoxCast(
-				_center + new Vector2( -0.475f, -0.595f ),
+				_center + new Vector2( 0.0f, -0.595f ),
 				new Vector2( 0.95f, 0.09f ),
 				layerMask,
 				s_groundLayerToCellMask );
@@ -255,7 +259,7 @@ namespace vzp {
 
 			// Cast ceiling and thin ceiling
 			return GenericBoxCast(
-				_center + new Vector2( -0.475f, 0.405f ),
+				_center + new Vector2( 0.0f, 0.405f ),
 				new Vector2( 0.95f, 0.09f ),
 				layerMask,
 				s_ceilingLayerToCellMask );
