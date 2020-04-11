@@ -333,7 +333,7 @@ namespace vzp {
 							}
 						}
 						m_debugTexture.Apply();
-					} catch( Exception _e ) {}
+					} catch( Exception ) {}
 
 					m_cells = cellsBackup;
 				}
