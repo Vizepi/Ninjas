@@ -6,11 +6,11 @@ namespace vzp {
 		//=============================================================================================
 		[Header( "Movement" )]
 		[SerializeField, Tooltip( "The speed of the enemy when patroling (m/s)" )]
-		float m_patrolSpeed = 1.0f;
+		protected float m_patrolSpeed = 1.0f;
 		[SerializeField, Tooltip( "The speed of the enemy when chasing (m/s)" )]
-		float m_chasingSpeed = 2.0f;
+		protected float m_chasingSpeed = 2.0f;
 		[SerializeField, Tooltip( "The time after which the enemy give up when they don't see the player (s)" )]
-		float m_giveUpTime = 3.0f;
+		protected float m_giveUpTime = 3.0f;
 
 		[Header( "Detection" )]
 		[SerializeField, Tooltip( "The range of detection of the enemy (m)" )]
@@ -42,6 +42,7 @@ namespace vzp {
 		protected EnemyPatrolState m_currentPatrolState = EnemyPatrolState.Walking;
 
 		protected Rigidbody2D m_rigidbody = null;
+		protected CharacterMotionController m_motionController = null;
 		RaycastHit2D[] m_groundHitChecker = new RaycastHit2D[ 1 ];
 
 		//=============================================================================================
@@ -92,6 +93,16 @@ namespace vzp {
 		protected virtual void OnKillingPlayer() { }
 		protected virtual void OnKilled() { }
 		#endregion
+
+		//=============================================================================================
+		public void OnAwake() {
+			m_rigidbody = GetComponent<Rigidbody2D>();
+			Debug.Assert( m_rigidbody );
+			m_motionController = GetComponent<CharacterMotionController>();
+			Debug.Assert( m_motionController );
+
+			m_motionController.Rigidbody = m_rigidbody;
+		}
 
 		//=============================================================================================
 		public void OnUpdate() {

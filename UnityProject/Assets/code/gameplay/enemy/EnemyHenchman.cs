@@ -48,7 +48,7 @@ namespace vzp {
 			canContinueWalking &= nextCell.Data.HasGround();
 
 			if ( canContinueWalking && distanceFromNextCell > m_stopDistanceFromPlatformEdge ) {
-
+				m_motionController.SetHorizontalMotion( m_patrolSpeed, IsFacingLeft ? -1.0f : 1.0f );
 			} else {
 				m_patrolStopTimer = m_stopTimeOnPlatformEdge;
 				m_currentPatrolState = EnemyPatrolState.Waiting;
