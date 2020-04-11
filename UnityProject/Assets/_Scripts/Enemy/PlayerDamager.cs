@@ -16,7 +16,6 @@ public class PlayerDamager : MonoBehaviour {
 		damaged = !lethal;
 		Debug.Log("touched");
 		if (dead) {
-			// TODO : call gamecontroller to kill player
 			Debug.Log("dead");
 
 		}
