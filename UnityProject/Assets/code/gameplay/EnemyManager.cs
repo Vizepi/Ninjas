@@ -17,6 +17,8 @@ namespace vzp {
 		Enemy[] m_enemies = new Enemy[ kMaxEnemies ];
 		EnemySpawn[] m_spawns = null;
 		int m_enemyCount = 0;
+		RandomGenerator m_random = new RandomGenerator();
+		float m_timer = 0.0f;
 
 		//=============================================================================================
 		public override void OnAwake() {
@@ -29,6 +31,10 @@ namespace vzp {
 
 		//=============================================================================================
 		public override void OnUpdate() {
+			m_timer += Time.deltaTime; // TODO jkieffer - Use game time
+
+			HandleSpawning();
+
 			for ( int i = 0; i < m_enemyCount; ++i ) {
 				Debug.Assert( m_enemies[ i ] != null );
 				m_enemies[ i ].OnUpdate();
@@ -49,6 +55,16 @@ namespace vzp {
 				Debug.Assert( m_enemies[ i ] != null );
 				m_enemies[ i ].OnFixedUpdate();
 			}
+		}
+
+		//=============================================================================================
+		public void ResetTimer() {
+			m_timer = 0.0f;
+		}
+
+		//=============================================================================================
+		public void HandleSpawning() {
+
 		}
 	}
 }
