@@ -63,7 +63,7 @@ namespace vzp {
 			public override void Update() {
 				switch ( m_hideState ) {
 				case State.Hiding:
-					m_timer -= Time.deltaTime;
+					m_timer -= Time.deltaTime; // TODO jkieffer - Use GameTime
 					if ( m_timer <= 0.0f ) {
 						m_hideState = State.Hidden;
 					}
@@ -85,7 +85,7 @@ namespace vzp {
 					Game.Player.m_rigidbody.isKinematic = true;
 					break;
 				case State.Unhiding:
-					m_timer -= Time.deltaTime;
+					m_timer -= Time.deltaTime; // TODO jkieffer - Use GameTime
 					if ( m_timer <= 0.0f ) {
 						m_hideState = State.Out;
 					}

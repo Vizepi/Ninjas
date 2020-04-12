@@ -27,7 +27,7 @@ namespace vzp {
 			float currentXMotionSign = Mathf.Sign( currentXMotion );
 			if ( HorizontalMotionDirection == 0.0f ) {
 				// Reduce speed by deceleration factor
-				float speedScaleFactor = HorizontalMotion * Time.deltaTime / m_zeroSpeedTime;
+				float speedScaleFactor = HorizontalMotion * Time.deltaTime / m_zeroSpeedTime; // TODO jkieffer - Use GameTime
 
 				if ( Mathf.Abs( currentXMotion ) < speedScaleFactor ) {
 					currentXMotion = 0.0f;
@@ -39,10 +39,10 @@ namespace vzp {
 
 			} else {
 				if ( currentXMotion != 0.0f && HorizontalMotionDirection != currentXMotionSign ) {
-					float speedScaleFactor = HorizontalMotion * Time.deltaTime / m_zeroSpeedTime;
+					float speedScaleFactor = HorizontalMotion * Time.deltaTime / m_zeroSpeedTime; // TODO jkieffer - Use GameTime
 					currentXMotion -= currentXMotionSign * speedScaleFactor;
 				}
-				float accelerationFactor = HorizontalMotion * Time.deltaTime / m_fullSpeedTime;
+				float accelerationFactor = HorizontalMotion * Time.deltaTime / m_fullSpeedTime; // TODO jkieffer - Use GameTime
 				currentXMotion += HorizontalMotionDirection * accelerationFactor;
 				currentXMotion = Mathf.Clamp( currentXMotion, -HorizontalMotion, HorizontalMotion );
 

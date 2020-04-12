@@ -107,7 +107,7 @@ namespace vzp {
 
 				// Move toward the ladder center
 				if ( !Mathf.Approximately( squareDistanceFromCenter, 0.0f ) ) {
-					float motion = Time.deltaTime * m_alignSpeed;
+					float motion = Time.deltaTime * m_alignSpeed; // TODO jkieffer - Use GameTime
 					if ( motion * motion >= squareDistanceFromCenter ) {
 						motion = Mathf.Sqrt( squareDistanceFromCenter );
 					}
@@ -138,7 +138,7 @@ namespace vzp {
 
 					if ( motion != 0.0f ) {
 						Vector3 position = Game.Player.transform.position;
-						position.y += motion * Time.deltaTime;
+						position.y += motion * Time.deltaTime; // TODO jkieffer - Use GameTime
 						Game.Player.transform.position = position;
 					}
 				}

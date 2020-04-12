@@ -62,7 +62,7 @@ namespace vzp {
 			//=============================================================================================
 			public void Update() {
 				UpdateHistory();
-				Vector3 position = Vector3.Lerp( m_camera.position - m_offset, m_position, m_acceleration * Time.deltaTime );
+				Vector3 position = Vector3.Lerp( m_camera.position - m_offset, m_position, m_acceleration * Time.deltaTime ); // TODO jkieffer - Use GameTime
 
 				m_camera.position = position + m_offset;
 				m_camera.LookAt( Game.Player.transform.position, Vector3.up );

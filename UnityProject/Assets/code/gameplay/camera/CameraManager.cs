@@ -42,7 +42,7 @@ namespace vzp {
 		//=============================================================================================
 		void UpdateSlot( CameraSlot _slot ) {
 			if ( _slot.camera.transform != _slot.transform ) {
-				float lerpFactor = _slot.acceleration * Time.deltaTime;
+				float lerpFactor = _slot.acceleration * Time.deltaTime; // TODO jkieffer - Use GameTime
 				_slot.camera.transform.position = Vector3.Lerp(
 					_slot.camera.transform.position,
 					_slot.transform.position,

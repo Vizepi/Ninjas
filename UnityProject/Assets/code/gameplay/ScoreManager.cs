@@ -33,7 +33,7 @@ namespace vzp {
 		//=============================================================================================
 		public override void OnUpdate() {
 			if ( m_comboTimer > 0.0f ) {
-				m_comboTimer -= Time.deltaTime;
+				m_comboTimer -= Time.deltaTime; // TODO jkieffer - Use GameTime
 				if ( m_comboTimer <= Mathf.Epsilon ) {
 					m_comboTimer = 0.0f;
 					m_combo = 0.0f;

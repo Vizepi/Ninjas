@@ -112,7 +112,7 @@ namespace vzp {
 
 				Game.Player.m_motionController.SetHorizontalMotion( m_jumpAirSpeed, motion );
 
-				m_afterJumpTimer -= Time.deltaTime;
+				m_afterJumpTimer -= Time.deltaTime; // TODO jkieffer - Use GameTime
 				if ( m_afterJumpTimer <= 0.0f ) {
 					if ( !m_hasExecutedFirstJump ) {
 						if ( Game.InputManager[ InputManager.ActionName.Jump ].state.state.justPressed ) {
