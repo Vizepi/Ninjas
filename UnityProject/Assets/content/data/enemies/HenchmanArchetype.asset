@@ -14,11 +14,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_prefab: {fileID: 530772525721613174, guid: 34e6d29d94838874187aad487de689bf, type: 3}
   m_probabilities:
-  - time: 0
-    probability: 1
-  - time: 120
-    probability: 0.6
-  - time: 150
-    probability: 0.45
-  - time: 180
-    probability: 0.3
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.0033333332
+      outSlope: -0.0033333332
+      tangentMode: 69
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 120
+      value: 0.6
+      inSlope: -0.0033333332
+      outSlope: -0.005000013
+      tangentMode: 69
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 180
+      value: 0.29999924
+      inSlope: -0.005000013
+      outSlope: -0.005000013
+      tangentMode: 69
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
