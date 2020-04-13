@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4150582569578489578}
   - component: {fileID: 4150582569578489577}
   m_Layer: 14
-  m_Name: hideout
+  m_Name: hideout_01
   m_TagString: Hideout
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,7 +70,7 @@ GameObject:
   - component: {fileID: 4150582570630964959}
   - component: {fileID: 4150582570630964944}
   m_Layer: 14
-  m_Name: back
+  m_Name: model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
