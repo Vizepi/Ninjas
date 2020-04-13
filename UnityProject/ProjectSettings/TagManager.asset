@@ -6,6 +6,11 @@ TagManager:
   tags:
   - Enemy
   - Hideout
+  - Ladder
+  - Ground
+  - Platform
+  - ThinPlatform
+  - Wall
   layers:
   - Default
   - TransparentFX
