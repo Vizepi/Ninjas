@@ -1,5 +1,4 @@
 ﻿// Copyright 2020 J. KIEFFER - All Rights Reserved.
-using System;
 using UnityEngine;
 
 namespace vzp {
