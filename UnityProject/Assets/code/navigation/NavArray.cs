@@ -311,9 +311,11 @@ namespace vzp {
 									}
 									if ( data.HasThinCeiling() ) {
 										Color c = new Color( 181 / 255.0f, 230 / 255.0f, 29 / 255.0f, m_debugTextureAlpha );
+										m_debugTexture.SetPixel( i * 5 + 0, j * 5 + 4, c );
 										m_debugTexture.SetPixel( i * 5 + 1, j * 5 + 4, c );
 										m_debugTexture.SetPixel( i * 5 + 2, j * 5 + 4, c );
 										m_debugTexture.SetPixel( i * 5 + 3, j * 5 + 4, c );
+										m_debugTexture.SetPixel( i * 5 + 4, j * 5 + 4, c );
 									}
 									if ( data.HasGround() ) {
 										Color c = new Color( 0 / 255.0f, 162 / 255.0f, 232 / 255.0f, m_debugTextureAlpha );
@@ -325,9 +327,11 @@ namespace vzp {
 									}
 									if ( data.HasThinGround() ) {
 										Color c = new Color( 153 / 255.0f, 217 / 255.0f, 234 / 255.0f, m_debugTextureAlpha );
+										m_debugTexture.SetPixel( i * 5 + 0, j * 5, c );
 										m_debugTexture.SetPixel( i * 5 + 1, j * 5, c );
 										m_debugTexture.SetPixel( i * 5 + 2, j * 5, c );
 										m_debugTexture.SetPixel( i * 5 + 3, j * 5, c );
+										m_debugTexture.SetPixel( i * 5 + 4, j * 5, c );
 									}
 								}
 							}
